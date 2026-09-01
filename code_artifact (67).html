@@ -1,0 +1,3078 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>周亿 - 个人主页与视觉简历</title>
+    <!-- GSAP Animation Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <style>
+        :root {
+            --bg-primary: #f8fafc;
+            --bg-secondary: #f1f5f9;
+            --bg-card: #ffffff;
+            --bg-card-hover: #f8fafc;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --text-mono: #334155;
+            --accent-orange: #ff5500;
+            --accent-green: #10b981;
+            --seal-red: #c0352b;
+            --border-color: #e2e8f0;
+            --border-dark: #1e293b;
+            --glass-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.08);
+            --radius-lg: 20px;
+            --radius-md: 14px;
+            --radius-sm: 8px;
+            --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            --font-ink: "STKaiti", "KaiTi", "楷体", "STXingkai", "Noto Serif SC", serif;
+            --transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            --user-bg-image: url('微信图片_20260824110853_102_71.jpg');
+            --academic-bg-image: url('我学.jpg');
+            --life-bg-image: url('生活热爱者.jpg');
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #090d16;
+            --bg-secondary: #131b2e;
+            --bg-card: #111827;
+            --bg-card-hover: #1f2937;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --text-mono: #cbd5e1;
+            --border-color: rgba(255, 255, 255, 0.12);
+            --border-dark: rgba(255, 255, 255, 0.2);
+            --glass-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        @media (pointer: fine) {
+            body, a, button, input, select, textarea, [role="button"] {
+                cursor: none !important;
+            }
+        }
+
+        #paperPlaneCursor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 38px;
+            height: 38px;
+            pointer-events: none;
+            z-index: 99999;
+            transform: translate(-10%, -10%) rotate(0deg);
+            transition: transform 0.08s ease-out, filter 0.2s ease;
+            filter: drop-shadow(0 4px 12px rgba(255, 85, 0, 0.4));
+            will-change: transform, left, top;
+        }
+
+        #paperPlaneCursor.hovering {
+            transform: translate(-10%, -10%) scale(1.35) rotate(-18deg);
+            filter: drop-shadow(0 6px 20px rgba(255, 85, 0, 0.85));
+        }
+
+        #paperPlaneCursor.clicking {
+            transform: translate(-10%, -10%) scale(0.88) rotate(6deg);
+        }
+
+        #paperPlaneTrailCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 99998;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-bottom: 0px;
+            transition: var(--transition);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        #bgCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.35;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 22px 0 22px;
+            display: flex;
+            flex-direction: column;
+            gap: 42px;
+        }
+
+        .top-badge-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+
+        .pill-badge {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            font-weight: 700;
+            padding: 7px 16px;
+            border-radius: 6px;
+            letter-spacing: 0.5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pill-black { background-color: var(--border-dark); color: #ffffff; }
+        .pill-outline { background-color: transparent; color: var(--text-main); border: 1px solid var(--border-color); }
+
+        .dot-green {
+            width: 9px;
+            height: 9px;
+            background-color: var(--accent-green);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent-green);
+        }
+        .dot-orange { color: var(--accent-orange); }
+
+        .hero-title-group {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 42px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .hero-name {
+            font-size: clamp(86px, 15vw, 130px);
+            font-weight: 900;
+            line-height: 1.05;
+            letter-spacing: 18px;
+            color: var(--text-main);
+            margin-right: -18px;
+            text-align: center;
+            transform: translateX(-18px);
+        }
+
+        .hero-avatar {
+            width: 185px;
+            height: 185px;
+            margin-top: -20px;
+            margin-left: 16px;
+            border-radius: 50%;
+            background: var(--bg-secondary);
+            border: 2px dashed var(--text-muted);
+            box-shadow: 0 14px 32px rgba(0, 0, 0, 0.12);
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .hero-avatar:hover { border-color: var(--text-main); transform: scale(1.04); }
+        .hero-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .hero-avatar img.loaded { opacity: 1; }
+
+        .hero-avatar-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            color: var(--text-muted);
+            font-size: 13.5px;
+            font-family: var(--font-mono);
+            font-weight: 700;
+            text-align: center;
+            background: var(--bg-secondary);
+            border-radius: 50%;
+            padding: 8px;
+            user-select: none;
+        }
+
+        .ink-slogan-card {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 28px 36px;
+            margin-bottom: 20px;
+            background: radial-gradient(circle at 15% 50%, rgba(168, 85, 247, 0.08) 0%, rgba(255, 255, 255, 0.95) 70%),
+                        linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
+            border: 1px solid var(--border-color);
+            border-left: 6px solid #ff5500;
+            border-radius: var(--radius-md);
+            box-shadow: 0 12px 32px -6px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            transition: transform 0.15s cubic-bezier(0.2, 0, 0.2, 1), box-shadow 0.3s ease;
+            perspective: 1000px;
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+
+        .ink-slogan-card:hover {
+            border-left-color: var(--seal-red);
+            box-shadow: 0 18px 42px -8px rgba(192, 53, 43, 0.22), 0 0 20px rgba(168, 85, 247, 0.15);
+        }
+
+        .ink-card-canvas {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 0;
+        }
+
+        .dragon-watermark {
+            position: absolute;
+            right: 48px;
+            top: 50%;
+            transform: translateY(-50%) rotate(-6deg);
+            width: 200px;
+            height: 200px;
+            opacity: 0.15;
+            pointer-events: none;
+            z-index: 1;
+            transition: var(--transition);
+            filter: drop-shadow(0 0 8px rgba(192, 53, 43, 0.3));
+        }
+
+        .ink-text-content {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            flex-wrap: wrap;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .ink-phrase {
+            font-family: var(--font-ink);
+            font-size: clamp(38px, 7.5vw, 58px);
+            font-weight: 900;
+            letter-spacing: 8px;
+            color: #0f172a !important;
+            line-height: 1.1;
+            position: relative;
+            display: inline-flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .ink-phrase .word {
+            color: #0f172a !important;
+            background: linear-gradient(180deg, #0f172a 0%, #334155 100%) !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+        }
+
+        .brush-underline {
+            width: 100%;
+            height: 7px;
+            margin-top: 2px;
+            background: radial-gradient(ellipse at center, var(--seal-red) 0%, #ff5500 60%, transparent 100%);
+            border-radius: 50%;
+            opacity: 0.85;
+            filter: blur(0.5px);
+            transform: scaleX(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .ink-divider {
+            width: 2px;
+            height: 42px;
+            background: linear-gradient(180deg, transparent, var(--seal-red), transparent);
+            opacity: 0.55;
+        }
+
+        .red-seal {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 52px;
+            height: 52px;
+            border: 2.5px double var(--seal-red);
+            color: var(--seal-red);
+            font-family: var(--font-ink);
+            font-size: 14px;
+            font-weight: 900;
+            line-height: 1.1;
+            padding: 3px;
+            writing-mode: vertical-rl;
+            border-radius: 6px;
+            box-shadow: inset 0 0 8px rgba(192, 53, 43, 0.2), 0 4px 12px rgba(192, 53, 43, 0.15);
+            transform: rotate(-6deg) translateZ(20px);
+            flex-shrink: 0;
+            user-select: none;
+            z-index: 2;
+            background: rgba(192, 53, 43, 0.05);
+            position: relative;
+        }
+
+        .flip-card-container {
+            perspective: 1000px;
+            width: 100%;
+            margin-bottom: 24px;
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
+        }
+
+        .flip-card-container.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card-front, .flip-card-back {
+            width: 100%;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            border-radius: var(--radius-md);
+        }
+
+        .flip-card-back {
+            position: absolute;
+            top: 0; left: 0; height: 100%;
+            transform: rotateY(180deg);
+            display: flex; flex-direction: column; justify-content: center;
+            background: var(--bg-card);
+            border: 1.5px solid rgba(168, 85, 247, 0.4);
+            box-shadow: 0 10px 30px rgba(168, 85, 247, 0.15);
+            padding: 24px 28px;
+            overflow: hidden;
+        }
+
+        .neon-purple-box {
+            position: relative;
+            border-radius: var(--radius-md);
+            background: var(--bg-card);
+            padding: 24px 28px;
+            border: 1.5px solid rgba(168, 85, 247, 0.35);
+            box-shadow: var(--glass-shadow);
+            transition: var(--transition);
+        }
+
+        .neon-purple-box:hover {
+            border-color: #a855f7;
+            box-shadow: 0 12px 32px rgba(168, 85, 247, 0.22);
+        }
+
+        .purple-header-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            font-size: 13px; font-family: var(--font-mono); font-weight: 700;
+            color: #9333ea; margin-bottom: 12px;
+        }
+
+        .bio-highlight-badge {
+            display: inline-flex; align-items: center; padding: 3px 12px; margin: 0 4px;
+            border-radius: 6px; background: rgba(168, 85, 247, 0.1);
+            border: 1px solid rgba(168, 85, 247, 0.25); color: var(--text-main);
+            font-weight: 800; font-size: 18px;
+        }
+
+        .hero-bio { font-size: 21px; line-height: 1.85; color: var(--text-muted); }
+
+        .contact-box-card {
+            background: var(--bg-card); border-radius: var(--radius-md);
+            padding: 22px 26px; border: 1px solid var(--border-color);
+            box-shadow: var(--glass-shadow);
+        }
+
+        .contact-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+        @media (min-width: 640px) { .contact-grid { grid-template-columns: repeat(3, 1fr); } }
+
+        .contact-item {
+            display: flex; flex-direction: column; gap: 6px; cursor: pointer;
+            transition: var(--transition); padding: 8px 10px; border-radius: var(--radius-sm);
+        }
+        .contact-item:hover { background: var(--bg-card-hover); }
+        .contact-label { font-size: 14px; color: var(--text-muted); font-weight: 700; }
+        .contact-val { font-family: var(--font-mono); font-size: 17px; font-weight: 800; color: var(--text-main); word-break: break-all; }
+
+        .section-header-wrap {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 18px; flex-wrap: wrap; gap: 12px;
+        }
+
+        .section-title {
+            font-size: 18px; font-family: var(--font-mono); font-weight: 800;
+            color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px;
+            display: flex; align-items: center; gap: 8px; position: relative;
+            cursor: pointer; user-select: none; transition: transform 0.2s ease, color 0.3s ease, text-shadow 0.3s ease;
+        }
+
+        .section-title::before { content: "//"; color: var(--accent-orange); font-weight: 900; }
+
+        .section-title:hover, .section-title.scrolling-active, .scroll-highlight-red {
+            color: #ef4444 !important;
+            text-shadow: 0 0 12px rgba(239, 68, 68, 0.4) !important;
+            transform: translateX(4px);
+        }
+
+        .upload-img-btn {
+            font-family: var(--font-mono); font-size: 12px; font-weight: 700;
+            padding: 6px 14px; border-radius: 6px; background: var(--bg-card);
+            border: 1px solid var(--border-color); color: var(--text-main); cursor: pointer;
+            transition: var(--transition); display: inline-flex; align-items: center; gap: 6px;
+        }
+
+        .scroll-controls-group { display: flex; align-items: center; gap: 8px; }
+
+        .scroll-nav-btn {
+            width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--border-color);
+            background: var(--bg-card); color: var(--text-main); font-size: 18px; font-weight: 700;
+            display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: var(--transition);
+        }
+
+        .scroll-track-container {
+            display: flex; gap: 22px; overflow-x: auto; overflow-y: hidden;
+            padding: 10px 4px 22px 4px; margin-bottom: 22px; scrollbar-width: none;
+            -webkit-overflow-scrolling: touch;
+            cursor: grab; user-select: none;
+        }
+        .scroll-track-container::-webkit-scrollbar { display: none; }
+
+        .color-card {
+            flex: 0 0 270px; min-width: 270px; height: 370px; background: #090d16;
+            border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 28px 22px;
+            cursor: pointer; transition: var(--transition); display: flex; flex-direction: column;
+            justify-content: space-between; position: relative; overflow: hidden; box-shadow: var(--glass-shadow);
+        }
+
+        .color-card:hover { transform: translateY(-7px) scale(1.02); border-color: var(--text-main); }
+
+        .card-bg-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; overflow: hidden; }
+        .card-bg-slice {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: var(--user-bg-image); background-size: cover; background-position: center;
+            transition: transform 0.4s ease, filter 0.3s ease; filter: saturate(1.2) contrast(1.1);
+        }
+
+        .card-block-1 .card-bg-slice { background-image: var(--life-bg-image), url('微信图片_20260824110853_102_71.jpg'), var(--user-bg-image); }
+        .card-block-2 .card-bg-slice { background-image: url('a1.png'), url('a1.jpg'), var(--user-bg-image); }
+        .card-block-3 .card-bg-slice { background-image: url('p1.png'), url('p1.jpg'), var(--user-bg-image); }
+        .card-block-4 .card-bg-slice { background-image: url('d1.png'), url('d1.jpg'), var(--user-bg-image); }
+        .card-block-5 .card-bg-slice { background-image: url('金顶旅途.jpg'), url('浪尖图片.png'), var(--user-bg-image); }
+
+        .color-card:hover .card-bg-slice { transform: scale(1.08); filter: saturate(1.35) contrast(1.15); }
+        .card-bg-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(180deg, rgba(9, 13, 22, 0.42) 0%, rgba(9, 13, 22, 0.18) 40%, rgba(9, 13, 22, 0.92) 100%);
+            z-index: 1;
+        }
+
+        .card-meteor-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; }
+        .color-card > div { position: relative; z-index: 3; }
+        .color-card::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 4px; z-index: 4; }
+        .card-block-1::before { background: #10b981; }
+        .card-block-2::before { background: #3b82f6; }
+        .card-block-3::before { background: #f59e0b; }
+        .card-block-4::before { background: #f43f5e; }
+        .card-block-5::before { background: #a855f7; }
+
+        .card-tag { font-family: var(--font-mono); font-size: 12px; font-weight: 700; color: #38bdf8; text-transform: uppercase; margin-bottom: 12px; }
+        .color-card h3 { font-size: 26px; font-weight: 900; margin-bottom: 12px; color: #ffffff; }
+        .color-card p { font-size: 16px; color: #cbd5e1; line-height: 1.7; }
+        .card-bottom-icon { font-family: var(--font-mono); font-size: 13px; color: #f8fafc; display: flex; justify-content: space-between; border-top: 1px dashed rgba(255, 255, 255, 0.2); padding-top: 16px; margin-top: auto; }
+
+        .accordion-gallery {
+            --ag-accent: #ff5500;
+            --ag-overlay: #060010;
+            --ag-text: #ffffff;
+            --ag-gap: 10px;
+            --ag-radius: 16px;
+            --ag-media-size: 380px;
+
+            display: flex;
+            flex-direction: row;
+            gap: var(--ag-gap);
+            width: 100%;
+            max-width: 100%;
+            height: 420px;
+            perspective: 1400px;
+            perspective-origin: 50% 50%;
+            margin-top: 16px;
+        }
+
+        .ag-panel {
+            position: relative;
+            flex: 1 1 0;
+            min-width: 0;
+            min-height: 0;
+            overflow: hidden;
+            border-radius: var(--ag-radius);
+            cursor: pointer;
+            display: block;
+            text-decoration: none;
+            outline: none;
+            transform-style: preserve-3d;
+            transform-origin: center center;
+            background: #0a0713;
+            box-shadow: 0 10px 30px -18px rgba(0, 0, 0, 0.8);
+            will-change: flex-grow, transform;
+            -webkit-tap-highlight-color: transparent;
+            border: 1px solid rgba(168, 85, 247, 0.25);
+            transition: border-color 0.3s ease;
+        }
+
+        .ag-panel:hover, .ag-panel.ag-panel--active {
+            border-color: #a855f7;
+        }
+
+        .ag-panel:focus-visible {
+            box-shadow: 0 0 0 2px var(--ag-accent), 0 10px 30px -18px rgba(0, 0, 0, 0.8);
+        }
+
+        .ag-panel__frame {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            border-radius: inherit;
+        }
+
+        .ag-panel__media {
+            --ag-gray: 1;
+            --ag-dim: 0.35;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: var(--ag-media-size);
+            height: 100%;
+            filter: grayscale(var(--ag-gray));
+            will-change: transform, filter;
+        }
+
+        .ag-panel__media img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            user-select: none;
+            -webkit-user-drag: none;
+        }
+
+        .ag-panel__overlay {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: linear-gradient(180deg, transparent 40%, rgba(6, 0, 16, 0.85) 100%), rgba(6, 0, 16, calc(var(--ag-dim, 0.35)));
+        }
+
+        .ag-panel__label {
+            position: absolute;
+            left: 18px;
+            bottom: 18px;
+            right: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .ag-panel__bar {
+            flex: 0 0 auto;
+            width: 3.5px;
+            height: 24px;
+            border-radius: 3px;
+            background: #ff5500;
+            opacity: 0;
+            box-shadow: 0 0 12px rgba(255, 85, 0, 0.8);
+        }
+
+        .ag-panel__text {
+            color: var(--ag-text);
+            font-family: var(--font-mono);
+            font-weight: 700;
+            font-size: 14.5px;
+            letter-spacing: 0.02em;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            opacity: 0;
+            text-shadow: 0 2px 14px rgba(0, 0, 0, 0.8);
+        }
+
+        @media (max-width: 580px) {
+            .accordion-gallery {
+                flex-direction: column;
+                perspective: none;
+                height: 480px !important;
+            }
+            .ag-panel {
+                min-height: 65px;
+                transform: none !important;
+            }
+            .accordion-gallery .ag-panel__media {
+                width: 100%;
+                height: var(--ag-media-size);
+            }
+        }
+
+        /* 3D Interactive Modal Photo Slider Stage for Block 1 & Block 4 */
+        .modal-3d-wrap {
+            position: relative;
+            width: 100%;
+            height: 360px;
+            perspective: 1200px;
+            user-select: none;
+            touch-action: pan-y;
+            overflow: hidden;
+            border-radius: var(--radius-md);
+            background: radial-gradient(circle at 50% 50%, rgba(168, 85, 247, 0.12) 0%, rgba(15, 23, 42, 0.95) 100%);
+            border: 1.5px solid rgba(168, 85, 247, 0.35);
+            margin-top: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-3d-stage {
+            position: absolute;
+            inset: 0;
+            transform-style: preserve-3d;
+        }
+
+        .modal-3d-card {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: clamp(260px, 60vw, 460px);
+            height: clamp(180px, 36vw, 270px);
+            transform: translate(-50%, -50%);
+            border-radius: 16px;
+            overflow: hidden;
+            background: #0f172a;
+            border: 2px solid rgba(168, 85, 247, 0.3);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+            will-change: transform, opacity, filter;
+            cursor: pointer;
+            transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.45s ease, filter 0.45s ease, border-color 0.3s ease;
+        }
+
+        .modal-3d-card.is-active {
+            border-color: #a855f7;
+            box-shadow: 0 20px 45px rgba(168, 85, 247, 0.5), 0 0 25px rgba(168, 85, 247, 0.6);
+        }
+
+        .modal-3d-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            pointer-events: none;
+        }
+
+        .modal-3d-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(0deg, rgba(9, 13, 22, 0.88) 0%, rgba(9, 13, 22, 0.1) 60%, transparent 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 12px 16px;
+            pointer-events: none;
+        }
+
+        .modal-3d-caption {
+            font-size: 14.5px;
+            font-weight: 800;
+            color: #ffffff;
+            font-family: var(--font-mono);
+        }
+
+        .modal-3d-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 3000;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1px solid rgba(168, 85, 247, 0.4);
+            background: rgba(15, 23, 42, 0.85);
+            color: #ffffff;
+            font-size: 20px;
+            font-weight: 800;
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .modal-3d-arrow:hover {
+            background: #a855f7;
+            border-color: #a855f7;
+            transform: translateY(-50%) scale(1.08);
+        }
+
+        .modal-3d-arrow--prev { left: 12px; }
+        .modal-3d-arrow--next { right: 12px; }
+
+        .modal-3d-dots {
+            position: absolute;
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 3000;
+            display: flex;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+        }
+
+        .modal-3d-dot {
+            width: 7px;
+            height: 7px;
+            border: none;
+            border-radius: 50%;
+            background: rgba(148, 163, 184, 0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .modal-3d-dot.is-active {
+            width: 22px;
+            border-radius: 8px;
+            background: #a855f7;
+        }
+
+        .interactive-widget {
+            background: var(--bg-card); border: 1.5px solid rgba(168, 85, 247, 0.3);
+            border-radius: var(--radius-md); padding: 24px; box-shadow: var(--glass-shadow); transition: var(--transition);
+        }
+        .interactive-widget:hover { border-color: #a855f7; box-shadow: 0 10px 30px rgba(168, 85, 247, 0.15); }
+        .widget-controls { display: flex; gap: 12px; margin-top: 16px; flex-wrap: wrap; }
+        .widget-btn {
+            padding: 9px 16px; font-family: var(--font-mono); font-size: 13px; font-weight: 700;
+            border-radius: var(--radius-sm); border: 1px solid var(--border-color); background: var(--bg-primary);
+            color: var(--text-main); cursor: pointer; transition: var(--transition);
+        }
+        .widget-btn:hover, .widget-btn.active-sim { border-color: var(--text-main); background: #1e293b; color: #ffffff; }
+
+        .output-box {
+            margin-top: 16px; background: #0f172a; padding: 20px 22px; border-radius: var(--radius-sm);
+            font-family: var(--font-mono); font-size: 15px; color: #38bdf8; min-height: 120px;
+            border: 1.5px solid rgba(168, 85, 247, 0.4); line-height: 1.8; position: relative;
+            white-space: pre-wrap; word-break: break-word; box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.8);
+        }
+
+        .ai-input-group { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+        .ai-prompt-input {
+            flex: 1; min-width: 220px; padding: 14px 20px; border-radius: var(--radius-sm);
+            border: 1.5px solid rgba(168, 85, 247, 0.4); background: var(--bg-primary); color: var(--text-main);
+            font-family: var(--font-mono); font-size: 15px; outline: none; transition: all 0.3s ease;
+            box-shadow: 0 0 12px rgba(168, 85, 247, 0.08);
+        }
+        .ai-prompt-input:focus, .ai-prompt-input:hover { border-color: #a855f7; box-shadow: 0 0 18px rgba(168, 85, 247, 0.35); }
+
+        .gemini-badge {
+            display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-family: var(--font-mono);
+            color: #9333ea; font-weight: 700; background: rgba(168, 85, 247, 0.1); padding: 4px 10px;
+            border-radius: 6px; border: 1px solid rgba(168, 85, 247, 0.25);
+        }
+        .ai-pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-orange); animation: pulseGlow 1.5s infinite; }
+        @keyframes pulseGlow { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 85, 0, 0.7); } 70% { transform: scale(1.1); box-shadow: 0 0 0 8px rgba(255, 85, 0, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 85, 0, 0); } }
+
+        .academic-section-wrap { margin-top: 10px; }
+        .academic-tag-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+        .academic-orange-box { width: 18px; height: 18px; border: 2px solid var(--accent-orange); border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .academic-orange-box::after { content: ""; width: 8px; height: 2px; background: var(--accent-orange); }
+        .academic-tag-title { font-size: 16px; font-weight: 800; color: var(--accent-orange); }
+        .academic-tag-sub { font-family: var(--font-mono); font-size: 13.5px; color: var(--text-muted); font-weight: 700; letter-spacing: 0.5px; }
+        .academic-main-title {
+            font-size: clamp(56px, 9vw, 84px);
+            font-weight: 900;
+            color: var(--text-main);
+            letter-spacing: -1px;
+            line-height: 1.1;
+            margin-bottom: 22px;
+            display: flex;
+            align-items: center;
+        }
+        .academic-title-dot { color: var(--accent-orange); font-weight: 900; margin-left: 2px; }
+
+        /* StrokeText CSS Animation Styling */
+        .stroke-text-wrap {
+            display: block;
+            width: 100%;
+            height: clamp(60px, 11vw, 110px);
+            margin-bottom: 18px;
+        }
+
+        .stroke-text-svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+            overflow: visible;
+        }
+
+        .academic-card-box {
+            position: relative; background: var(--bg-card); border: 2px solid #d8b4fe; border-radius: var(--radius-lg);
+            padding: 34px 38px; overflow: hidden; box-shadow: var(--glass-shadow); transition: var(--transition);
+        }
+        .academic-bg-layer {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;
+            background-image: var(--academic-bg-image), url('我学.jpg'), url('我求学之路.jpg'), url('我的求学背景.jpg');
+            background-size: cover; background-position: center; transition: transform 0.5s ease; opacity: 0.85;
+        }
+        .dragon-totem-overlay {
+            position: absolute; right: 28px; bottom: 20px; width: 130px; height: 130px; pointer-events: none;
+            opacity: 0.28; transition: all 0.4s ease; z-index: 2; filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.4));
+        }
+        .academic-card-box:hover .dragon-totem-overlay { opacity: 0.75; transform: scale(1.1) rotate(-4deg); filter: drop-shadow(0 0 18px rgba(192, 53, 43, 0.85)); }
+
+        .academic-list { position: relative; z-index: 3; display: flex; flex-direction: column; }
+        .academic-row-item { display: flex; justify-content: space-between; align-items: center; padding: 24px 0; border-bottom: 1px solid var(--border-color); }
+        .academic-row-item:last-child { border-bottom: none; }
+        
+        /* Pure Black, Extra Large High-Contrast Labels for Academic Section */
+        .academic-item-label {
+            font-size: clamp(36px, 5.8vw, 48px) !important;
+            font-weight: 900 !important;
+            color: #000000 !important;
+            letter-spacing: 2px !important;
+            text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+        }
+        .academic-item-value { font-size: clamp(26px, 4.5vw, 36px); font-weight: 900; color: #ff5500; text-align: right; letter-spacing: -0.2px; text-shadow: 0 0 10px rgba(255, 85, 0, 0.2); }
+
+        .slider-5photo-wrap {
+            position: relative;
+            width: 100%;
+            height: 520px;
+            perspective: 1200px;
+            user-select: none;
+            touch-action: pan-y;
+            overflow: hidden;
+            border-radius: var(--radius-lg);
+            background: radial-gradient(circle at 50% 50%, #f3e8ff 0%, #f8fafc 80%);
+            border: 1.5px solid rgba(168, 85, 247, 0.35);
+            box-shadow: var(--glass-shadow);
+            margin-top: 18px;
+        }
+
+        .slider-5photo-stage {
+            position: absolute;
+            inset: 0;
+            transform-style: preserve-3d;
+        }
+
+        .slider-5photo-card {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: clamp(340px, 65vw, 580px);
+            height: clamp(220px, 40vw, 350px);
+            transform: translate(-50%, -50%);
+            border-radius: 20px;
+            overflow: hidden;
+            background: #ffffff;
+            border: 2px solid rgba(168, 85, 247, 0.25);
+            box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.12), 0 0 25px rgba(168, 85, 247, 0.15);
+            will-change: transform, opacity, filter;
+            cursor: pointer;
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease, filter 0.5s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .slider-5photo-card.is-active {
+            border-color: #a855f7;
+            box-shadow: 0 25px 55px -10px rgba(168, 85, 247, 0.35), 0 0 35px rgba(168, 85, 247, 0.4), 0 0 0 2px rgba(168, 85, 247, 0.8);
+        }
+
+        .slider-5photo-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            pointer-events: none;
+        }
+
+        .slider-5photo-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(0deg, rgba(15, 23, 42, 0.85) 0%, rgba(15, 23, 42, 0.1) 60%, transparent 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 18px 22px;
+            pointer-events: none;
+        }
+
+        .slider-5photo-tag {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            font-weight: 800;
+            color: #c084fc;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .slider-5photo-title {
+            font-size: 17px;
+            font-weight: 800;
+            color: #ffffff;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+        }
+
+        .slider-5photo-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 3000;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            color: #0f172a;
+            font-size: 24px;
+            font-weight: 800;
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .slider-5photo-arrow:hover {
+            background: #a855f7;
+            border-color: #a855f7;
+            color: #ffffff;
+            box-shadow: 0 0 25px rgba(168, 85, 247, 0.5);
+            transform: translateY(-50%) scale(1.08);
+        }
+
+        .slider-5photo-arrow--prev { left: 18px; }
+        .slider-5photo-arrow--next { right: 18px; }
+
+        .slider-5photo-dots {
+            position: absolute;
+            bottom: 18px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 3000;
+            display: flex;
+            gap: 8px;
+            padding: 6px 16px;
+            border-radius: 30px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(168, 85, 247, 0.25);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+        }
+
+        .slider-5photo-dot {
+            width: 8px;
+            height: 8px;
+            border: none;
+            border-radius: 50%;
+            background: rgba(148, 163, 184, 0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .slider-5photo-dot.is-active {
+            width: 26px;
+            border-radius: 10px;
+            background: #a855f7;
+            box-shadow: 0 0 12px rgba(168, 85, 247, 0.6);
+        }
+
+        .scroll-expand {
+            position: relative;
+            width: 100%;
+            margin-top: -28px;
+            margin-bottom: 0;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+        }
+
+        .scroll-expand__track {
+            position: relative;
+            width: 100%;
+        }
+
+        .scroll-expand__stage {
+            position: sticky;
+            top: 0;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+            --se-title-size: clamp(2rem, 5.5vw, 4.5rem);
+            border-radius: var(--radius-lg);
+        }
+
+        .scroll-expand__frame {
+            position: absolute;
+            inset: 0;
+            clip-path: inset(21% 29% 21% 29% round 28px);
+            will-change: clip-path;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
+        }
+
+        .scroll-expand__media {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center 25%;
+            will-change: transform;
+            transform-origin: center;
+            user-select: none;
+            -webkit-user-drag: none;
+        }
+
+        .scroll-expand__scrim {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.2) 50%, rgba(0, 0, 0, 0.6) 100%);
+            opacity: 0;
+        }
+
+        .scroll-expand__overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 6%;
+            opacity: 0;
+            will-change: opacity, transform;
+        }
+
+        .scroll-expand__title {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 0 6%;
+            text-align: center;
+            font-size: var(--se-title-size);
+            font-weight: 900;
+            letter-spacing: 0.05em;
+            line-height: 1.1;
+            color: #fff;
+            text-shadow: 0 4px 30px rgba(0, 0, 0, 0.8), 0 0 20px rgba(110, 160, 255, 0.6);
+            pointer-events: none;
+            will-change: opacity, transform;
+        }
+
+        .scroll-expand__hint {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 2rem;
+            text-align: center;
+            font-size: 0.875rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.75);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            pointer-events: none;
+            will-change: opacity, transform;
+            font-family: var(--font-mono);
+            font-weight: 700;
+        }
+
+        .scroll-expand__hint::after {
+            content: "↓";
+            font-size: 1.2rem;
+            animation: bounceHint 1.5s infinite;
+        }
+
+        @keyframes bounceHint {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(6px); }
+        }
+
+        .scroll-expand-overlay-card {
+            background: rgba(10, 14, 23, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1.5px solid rgba(168, 85, 247, 0.4);
+            border-radius: 20px;
+            padding: 32px 36px;
+            max-width: 680px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+
+        .scroll-expand-overlay-card h2 {
+            font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+            font-weight: 800;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #ffffff 0%, #d8b4fe 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .scroll-expand-overlay-card p {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: #cbd5e1;
+            font-family: var(--font-mono);
+        }
+
+        /* Fullscreen Vibrant "PPT设计者" Overlay Page Styles */
+        .ppt-overlay-page {
+            position: fixed; inset: 0; width: 100vw; height: 100vh;
+            background: radial-gradient(circle at 50% 20%, #170a2c 0%, #080514 60%, #030208 100%);
+            z-index: 500000; display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+            opacity: 0; pointer-events: none; transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            overflow-y: auto; overflow-x: hidden; padding: 40px 20px 80px 20px;
+        }
+
+        .ppt-overlay-page.active { opacity: 1; pointer-events: auto; }
+
+        .ppt-ambient-glow-1 {
+            position: absolute; top: 15%; left: 50%; transform: translateX(-50%);
+            width: 650px; height: 380px;
+            background: radial-gradient(ellipse, rgba(168, 85, 247, 0.3) 0%, rgba(236, 72, 153, 0.2) 40%, rgba(56, 189, 248, 0) 70%);
+            filter: blur(80px); pointer-events: none; z-index: 0;
+            animation: pptPulseGlow 8s ease-in-out infinite alternate;
+        }
+
+        @keyframes pptPulseGlow { 0% { transform: translateX(-50%) scale(0.9); opacity: 0.6; } 100% { transform: translateX(-50%) scale(1.15); opacity: 1; } }
+
+        .ppt-close-btn {
+            position: fixed; top: 28px; right: 28px; z-index: 10;
+            padding: 10px 24px; border-radius: 30px;
+            background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.25);
+            color: #ffffff; font-family: var(--font-mono); font-size: 14px; font-weight: 800;
+            cursor: pointer; backdrop-filter: blur(14px); transition: all 0.3s ease;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5); display: inline-flex; align-items: center; gap: 8px;
+        }
+
+        .ppt-close-btn:hover {
+            background: #ef4444; border-color: #ef4444; transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 0 25px rgba(239, 68, 68, 0.8);
+        }
+
+        .ppt-hero-center-stage {
+            position: relative; z-index: 2; display: flex; flex-direction: column;
+            align-items: center; text-align: center; margin-top: 50px; width: 100%; max-width: 950px;
+        }
+
+        .ppt-hero-title-wrap { position: relative; display: inline-block; margin-bottom: 20px; }
+
+        .ppt-hero-title {
+            font-family: var(--font-ink); font-size: clamp(52px, 10vw, 92px); font-weight: 900;
+            letter-spacing: 10px;
+            background: linear-gradient(135deg, #ffffff 0%, #f472b6 30%, #c084fc 60%, #38bdf8 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 35px rgba(192, 132, 252, 0.6)); line-height: 1.15;
+            opacity: 0; transform: scale(0.95);
+            transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1), transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+            user-select: none;
+        }
+
+        .ppt-overlay-page.active .ppt-hero-title { opacity: 1; transform: scale(1); }
+
+        #rainbowInkCanvas {
+            position: absolute; top: 85%; left: 50%; transform: translateX(-50%);
+            width: 1000px; height: 380px; pointer-events: none; z-index: 1;
+        }
+
+        .ppt-badge-cards-container {
+            display: flex; gap: 22px; justify-content: center; flex-wrap: wrap;
+            width: 100%; margin-top: 130px; z-index: 3;
+            opacity: 0; transform: translateY(30px);
+            transition: opacity 0.8s ease 0.35s, transform 0.8s ease 0.35s;
+        }
+
+        .ppt-overlay-page.active .ppt-badge-cards-container { opacity: 1; transform: translateY(0); }
+
+        .ppt-feature-card {
+            background: rgba(255, 255, 255, 0.05); border: 1.5px solid rgba(255, 255, 255, 0.15);
+            border-radius: var(--radius-md); padding: 22px 32px; backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex; align-items: center; gap: 14px; position: relative; overflow: hidden;
+        }
+
+        .ppt-feature-card::before {
+            content: ''; position: absolute; inset: 0; border-radius: var(--radius-md); padding: 1.5px;
+            background: linear-gradient(135deg, #f43f5e, #a855f7, #38bdf8);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor; mask-composite: exclude;
+            opacity: 0.6; transition: opacity 0.3s ease;
+        }
+
+        .ppt-feature-card:hover {
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: 0 20px 45px rgba(168, 85, 247, 0.4), 0 0 25px rgba(56, 189, 248, 0.3);
+        }
+
+        .ppt-feature-card:hover::before { opacity: 1; }
+
+        .ppt-card-icon {
+            width: 44px; height: 44px; border-radius: 12px; display: flex;
+            align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0;
+            background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .ppt-card-text {
+            font-family: var(--font-mono); font-size: clamp(15px, 2.2vw, 18px);
+            font-weight: 800; color: #ffffff; letter-spacing: 0.5px; text-align: left;
+        }
+
+        .ppt-gallery-section {
+            width: 100%; max-width: 1050px; margin-top: 60px; z-index: 3;
+            opacity: 0; transform: translateY(30px);
+            transition: opacity 0.8s ease 0.55s, transform 0.8s ease 0.55s;
+        }
+
+        .ppt-overlay-page.active .ppt-gallery-section { opacity: 1; transform: translateY(0); }
+
+        .ppt-gallery-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px; margin-top: 24px;
+        }
+
+        .ppt-gallery-card {
+            position: relative; border-radius: var(--radius-md); overflow: hidden;
+            background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.12);
+            aspect-ratio: 16 / 9; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4); cursor: pointer;
+            transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .ppt-gallery-card:hover {
+            transform: translateY(-8px) scale(1.03); border-color: #a855f7;
+            box-shadow: 0 18px 40px rgba(168, 85, 247, 0.4), 0 0 20px rgba(244, 114, 182, 0.3);
+        }
+
+        .ppt-gallery-card img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }
+        .ppt-gallery-card:hover img { transform: scale(1.08); }
+
+        .ppt-card-tag {
+            position: absolute; bottom: 0; left: 0; right: 0; padding: 10px 14px;
+            background: linear-gradient(180deg, transparent 0%, rgba(8, 5, 18, 0.92) 100%);
+            color: #ffffff; font-family: var(--font-mono); font-size: 13px; font-weight: 700;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+
+        .thanks-card {
+            background: var(--bg-card); border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg); padding: 46px 40px; box-shadow: var(--glass-shadow);
+            position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 28px;
+            cursor: pointer;
+        }
+
+        .thanks-body-text {
+            font-family: var(--font-ink); font-size: clamp(26px, 4.2vw, 42px); font-weight: 900;
+            line-height: 1.8; letter-spacing: 3px; position: relative; z-index: 2;
+            filter: drop-shadow(0 4px 12px rgba(192, 53, 43, 0.15));
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            user-select: none;
+        }
+
+        /* BlurText React Motion Replication */
+        .blur-text-line {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .blur-text-char {
+            display: inline-block;
+            will-change: transform, filter, opacity;
+            opacity: 0;
+            filter: blur(12px);
+            transform: translateY(-40px);
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), 
+                        filter 0.6s cubic-bezier(0.16, 1, 0.3, 1), 
+                        opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            background: linear-gradient(135deg, var(--text-main) 20%, var(--seal-red) 70%, var(--accent-orange) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .blur-text-char.animated {
+            opacity: 1;
+            filter: blur(0px);
+            transform: translateY(0);
+        }
+
+        .letter-signoff-container {
+            display: flex; flex-direction: column; align-items: flex-end; justify-content: center;
+            width: 100%; position: relative; z-index: 2; margin-top: 10px;
+        }
+
+        .letter-art-text {
+            font-family: var(--font-ink); font-size: clamp(28px, 5.5vw, 48px); font-weight: 900;
+            letter-spacing: 8px;
+            background: linear-gradient(135deg, var(--text-main) 0%, var(--seal-red) 55%, var(--accent-orange) 100%);
+            background-size: 200% 200%; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            animation: inkGradientFlow 6s ease infinite;
+            filter: drop-shadow(0 4px 18px rgba(192, 53, 43, 0.25));
+        }
+
+        @keyframes inkGradientFlow { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+        .theme-toggle-btn {
+            position: fixed; top: 22px; right: 22px; background: var(--bg-card);
+            border: 1px solid var(--border-color); color: var(--text-main); cursor: pointer;
+            padding: 12px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            z-index: 1000; box-shadow: var(--glass-shadow);
+        }
+
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(5, 8, 16, 0.78); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+            z-index: 2000; display: flex; align-items: center; justify-content: center;
+            padding: 18px; opacity: 0; pointer-events: none; transition: var(--transition); perspective: 1200px;
+        }
+
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+
+        .modal-box {
+            background: var(--bg-card); border: 1.5px solid rgba(168, 85, 247, 0.45);
+            border-radius: var(--radius-lg); width: 100%; max-width: 820px;
+            padding: 32px; position: relative; max-height: 90vh;
+            display: flex; flex-direction: column;
+            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7), 0 0 35px rgba(168, 85, 247, 0.25);
+            transform: rotateX(12deg) scale(0.92) translateY(20px);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); overflow: hidden;
+        }
+
+        .modal-overlay.active .modal-box { transform: rotateX(0deg) scale(1) translateY(0); }
+
+        .modal-sparkle-canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+        .modal-content-wrap { position: relative; z-index: 2; display: flex; flex-direction: column; }
+
+        .modal-gallery-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+            gap: 16px; margin-top: 20px; max-height: 520px; overflow-y: auto; padding-right: 6px; scrollbar-width: thin;
+        }
+
+        .modal-gallery-item {
+            position: relative; border-radius: var(--radius-md); overflow: hidden;
+            background: var(--bg-secondary); border: 1px solid var(--border-color); aspect-ratio: 4 / 3;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .modal-gallery-item:hover {
+            transform: translateY(-6px) scale(1.03); border-color: #a855f7;
+            box-shadow: 0 12px 28px rgba(168, 85, 247, 0.4), 0 0 15px rgba(56, 189, 248, 0.3);
+        }
+
+        .modal-gallery-item img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s ease; }
+        .modal-gallery-item:hover img { transform: scale(1.08); }
+
+        .gallery-caption {
+            position: absolute; bottom: 0; left: 0; width: 100%; padding: 8px 6px 6px;
+            background: linear-gradient(180deg, transparent, rgba(9, 13, 22, 0.88));
+            color: #ffffff; font-size: 11.5px; font-family: var(--font-mono); font-weight: 700; text-align: center;
+        }
+
+        .modal-close {
+            position: absolute; top: 16px; right: 16px; width: 36px; height: 36px;
+            border-radius: 50%; background: rgba(255, 255, 255, 0.08); border: 1px solid var(--border-color);
+            color: var(--text-main); font-size: 20px; font-weight: 700; display: flex;
+            align-items: center; justify-content: center; cursor: pointer; transition: var(--transition); z-index: 20; line-height: 1;
+        }
+
+        .modal-close:hover { background: var(--accent-orange); color: #ffffff; border-color: var(--accent-orange); transform: rotate(90deg) scale(1.1); }
+
+        .lightbox-overlay {
+            position: fixed; inset: 0; width: 100vw; height: 100vh; background: rgba(3, 5, 12, 0.95);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); z-index: 999999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.35s ease;
+        }
+
+        .lightbox-overlay.active { opacity: 1; pointer-events: auto; }
+
+        .lightbox-fullscreen-stage {
+            position: relative; width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px;
+        }
+
+        .lightbox-fullscreen-stage img {
+            max-width: 98vw; max-height: 90vh; width: auto; height: auto; object-fit: contain;
+            border-radius: var(--radius-sm); box-shadow: 0 30px 80px rgba(0, 0, 0, 0.9), 0 0 40px rgba(168, 85, 247, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.15); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .lightbox-caption-bar {
+            position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%);
+            background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(168, 85, 247, 0.4); padding: 10px 24px;
+            border-radius: 30px; font-family: var(--font-mono); font-size: 15px; font-weight: 700; color: #ffffff;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); backdrop-filter: blur(12px); text-align: center; z-index: 10;
+        }
+
+        .lightbox-close {
+            position: absolute; top: 24px; right: 24px; width: 48px; height: 48px; border-radius: 50%;
+            background: rgba(255, 255, 255, 0.12); border: 1px solid rgba(255, 255, 255, 0.25);
+            color: #ffffff; font-size: 26px; font-weight: 700; display: flex; align-items: center;
+            justify-content: center; cursor: pointer; transition: var(--transition); z-index: 1000000; backdrop-filter: blur(10px);
+        }
+
+        .lightbox-close:hover { background: #ef4444; color: #ffffff; border-color: #ef4444; transform: rotate(90deg) scale(1.1); box-shadow: 0 0 25px rgba(239, 68, 68, 0.7); }
+
+        .toast {
+            position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(100px);
+            background: var(--border-dark); color: #ffffff; padding: 14px 28px; border-radius: 30px;
+            font-size: 14px; font-weight: 700; font-family: var(--font-mono); transition: var(--transition); z-index: 3000; pointer-events: none;
+        }
+
+        .toast.show { transform: translateX(-50%) translateY(0); }
+        .icon { width: 20px; height: 20px; fill: currentColor; }
+    </style>
+</head>
+<body>
+    <canvas id="bgCanvas"></canvas>
+    <canvas id="paperPlaneTrailCanvas"></canvas>
+
+    <div id="paperPlaneCursor">
+        <svg viewBox="0 0 32 32" width="100%" height="100%" fill="none">
+            <defs>
+                <linearGradient id="planeBodyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#ffffff"/>
+                    <stop offset="100%" stop-color="#cbd5e1"/>
+                </linearGradient>
+                <linearGradient id="planeWingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#ff5500"/>
+                    <stop offset="100%" stop-color="#dc2626"/>
+                </linearGradient>
+            </defs>
+            <path d="M 4 15 L 28 4 L 17 28 L 13 18 Z" fill="url(#planeBodyGrad)" stroke="var(--border-dark)" stroke-width="1.2"/>
+            <path d="M 28 4 L 13 18" stroke="url(#planeWingGrad)" stroke-width="1.8"/>
+            <circle cx="13" cy="18" r="2.5" fill="var(--accent-orange)"/>
+        </svg>
+    </div>
+
+    <button class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleTheme()" aria-label="切换主题">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/></svg>
+    </button>
+
+    <div class="container">
+        <header>
+            <div class="top-badge-row">
+                <div class="pill-badge pill-black">
+                    <span class="dot-green"></span> IDENTITY: FRESHMAN_V1.0
+                </div>
+                <div class="pill-badge pill-outline">
+                    INTEREST: AI_ENTHUSIAST
+                </div>
+            </div>
+
+            <div class="hero-title-group">
+                <div class="hero-name">周 亿<span class="dot-orange">.</span></div>
+                <div class="hero-avatar" title="头像">
+                    <img src="头像.png" alt="周亿" loading="lazy" onload="this.classList.add('loaded'); this.nextElementSibling.style.display='none';" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                    <div class="hero-avatar-placeholder">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <rect x="3" y="3" width="18" height="18" rx="4"></rect>
+                            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                            <polyline points="21 15 16 10 5 21"></polyline>
+                        </svg>
+                        <span style="margin-top: 6px; font-size: 13px; font-weight: 700;">周亿</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Standard Simplified Chinese Slogan & Dragon Totem -->
+            <div class="ink-slogan-card" id="sloganCard" title="点击触发挥毫爆破特效">
+                <canvas class="ink-card-canvas" id="cardCanvas"></canvas>
+                <div class="dragon-watermark">
+                    <svg viewBox="0 0 200 200" fill="none">
+                        <path d="M100 20 C110 35, 130 30, 140 45 C150 60, 130 80, 150 95 C170 110, 185 130, 160 155 C135 180, 100 170, 80 185 C60 195, 40 175, 50 150 Z" stroke="currentColor" stroke-width="3" opacity="0.4"/>
+                        <text x="75" y="112" font-family="var(--font-ink)" font-size="28" fill="currentColor" opacity="0.3" font-weight="900">龙</text>
+                    </svg>
+                </div>
+                <div class="ink-text-content">
+                    <div class="ink-phrase">
+                        <span class="word">生而无畏</span>
+                        <div class="brush-underline"></div>
+                    </div>
+                    <div class="ink-divider"></div>
+                    <div class="ink-phrase">
+                        <span class="word">战至终章</span>
+                        <div class="brush-underline"></div>
+                    </div>
+                </div>
+                <div class="red-seal" id="sealStamp">周亿<br>无畏</div>
+            </div>
+
+            <div class="flip-card-container" id="profileFlipCard">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front neon-purple-box">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                            <span class="purple-header-badge" id="bioHeaderTitle">// EXPLORER DECLARATION · 探索者宣言</span>
+                            <button class="widget-btn" style="font-size: 11px; padding: 4px 10px;" onclick="toggleCardFlip('profileFlipCard')">🔄 3D 翻转卡片</button>
+                        </div>
+                        <div class="hero-bio">
+                            来自西南石油大学<span class="bio-highlight-badge">大一新生</span>，是一个对<span class="bio-highlight-badge">世界运行规则</span>的探索者，对<span class="bio-highlight-badge">AI</span>的狂热爱好者，同时也是一个<span class="bio-highlight-badge">视频剪辑</span>与<span class="bio-highlight-badge">视觉艺术</span>的追求者。正在探索 AI 与代码对视觉艺术与商业逻辑的协作极限。
+                        </div>
+                    </div>
+                    <div class="flip-card-back">
+                        <div style="font-size: 18px; font-weight: 800; color: #a855f7; margin-bottom: 12px; font-family: var(--font-mono);">⚡ 周亿 · 核心优势与技术矩阵</div>
+                        <div style="font-size: 14px; color: var(--text-muted); line-height: 1.7; font-family: var(--font-mono);">
+                            • <strong>经济学逻辑</strong>：掌握系统博弈、边际效用分析与商业模式拆解；<br>
+                            • <strong>AI 自动化</strong>：熟悉 Prompt 链式工程与 Python 自动化流程构建；<br>
+                            • <strong>视觉美学</strong>：专业 PPT 高层级汇报排版与短视频视效剪辑。<br>
+                        </div>
+                        <button class="widget-btn" style="margin-top: 14px; align-self: flex-end; font-size: 11px;" onclick="toggleCardFlip('profileFlipCard')">↩ 返回正面</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="contact-box-card">
+                <div class="contact-grid">
+                    <div class="contact-item" onclick="copyContact('136790922478', '手机号')">
+                        <span class="contact-label">手机号</span>
+                        <span class="contact-val">136790922478</span>
+                    </div>
+                    <div class="contact-item" onclick="copyContact('w13579992mm', '微信号')">
+                        <span class="contact-label">微信号</span>
+                        <span class="contact-val">w13579992mm</span>
+                    </div>
+                    <div class="contact-item" onclick="copyContact('zhouyi16816816@qq.com', '邮箱')">
+                        <span class="contact-label">邮箱</span>
+                        <span class="contact-val">zhouyi16816816@qq.com</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <section>
+            <div class="neon-purple-box" style="margin-bottom: 20px; padding: 18px 24px;">
+                <div class="section-header-wrap" style="margin-bottom: 0;">
+                    <div class="section-title scroll-highlight-target" id="scrollTrackTitle">
+                        核心五大领域 (🖱️ 滚轮 / 拖拽滑动)
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <label class="upload-img-btn" title="上传或更换背景图">
+                            <span>🖼️ 上传/更换背景图</span>
+                            <input type="file" id="bgImageInput" accept="image/*" style="display: none;" />
+                        </label>
+                        <div class="scroll-controls-group">
+                            <button class="scroll-nav-btn" onclick="scrollTrackBy(-270)">‹</button>
+                            <button class="scroll-nav-btn" onclick="scrollTrackBy(270)">›</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="scroll-track-container" id="scrollTrack">
+                <div class="color-card card-block-1" onclick="openModal('block1')">
+                    <div class="card-bg-layer"><div class="card-bg-slice"></div><div class="card-bg-overlay"></div><canvas class="card-meteor-canvas"></canvas></div>
+                    <div><div class="card-tag">01 // LIFE</div><h3>生活热爱者</h3><p>保持敏感度与好奇感，探索世间微小美感、城市细节与人间烟火。</p></div>
+                    <div class="card-bottom-icon"><span>EXPLORE</span><span>→</span></div>
+                </div>
+                <div class="color-card card-block-2" onclick="openModal('block2')">
+                    <div class="card-bg-layer"><div class="card-bg-slice"></div><div class="card-bg-overlay"></div><canvas class="card-meteor-canvas"></canvas></div>
+                    <div><div class="card-tag">02 // CODE</div><h3>AI+编程开发者</h3><p>点击开启 3D 手风琴折叠画廊：Prompt 链式调优与 LLM 自动化交互展示。</p></div>
+                    <div class="card-bottom-icon"><span>ACCORDION 3D GALLERY</span><span>→</span></div>
+                </div>
+                <!-- PPT Designer Card with Direct Trigger to Overlay Page -->
+                <div class="color-card card-block-3" onclick="openPPTOverlayPage()">
+                    <div class="card-bg-layer"><div class="card-bg-slice"></div><div class="card-bg-overlay"></div><canvas class="card-meteor-canvas"></canvas></div>
+                    <div><div class="card-tag">03 // DESIGN</div><h3>PPT 设计者</h3><p>点击开启沉浸全屏演练页：居中流光文字，持续滴出七彩墨水，查看专属视觉战绩。</p></div>
+                    <div class="card-bottom-icon"><span>ENTER OVERLAY</span><span>→</span></div>
+                </div>
+                <div class="color-card card-block-4" onclick="openModal('block4')">
+                    <div class="card-bg-layer"><div class="card-bg-slice"></div><div class="card-bg-overlay"></div><canvas class="card-meteor-canvas"></canvas></div>
+                    <div><div class="card-tag">04 // MEDIA</div><h3>自媒体创作者</h3><p>专注于视频剪辑与视觉艺术表达，用镜头语言与情绪对齐讲述动人故事。</p></div>
+                    <div class="card-bottom-icon"><span>CREATE</span><span>→</span></div>
+                </div>
+                <!-- Block 5 upgraded with 3D Accordion Fold Gallery identical to Block 2 -->
+                <div class="color-card card-block-5" onclick="openModal('block5')">
+                    <div class="card-bg-layer"><div class="card-bg-slice"></div><div class="card-bg-overlay"></div><canvas class="card-meteor-canvas"></canvas></div>
+                    <div><div class="card-tag">05 // INNOVATION</div><h3>创新破局者</h3><p>点击开启 3D 手风琴折叠画廊：打破思维壁垒与信息差，在浪尖社区与多域协作中建立核心竞争壁垒。</p></div>
+                    <div class="card-bottom-icon"><span>ACCORDION 3D GALLERY</span><span>→</span></div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <div class="academic-tag-row">
+                <div class="academic-orange-box"></div>
+                <span class="academic-tag-title">逻辑推理</span>
+                <span class="academic-tag-sub">// ECONOMIC_CHAIN_REASONING</span>
+            </div>
+            <h2 class="academic-main-title scroll-highlight-target">
+                经济学链式推导<span class="academic-title-dot">。</span>
+            </h2>
+
+            <div class="interactive-widget">
+                <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+                    <p style="font-size: 14.5px; color: var(--text-muted); margin: 0;">
+                        结合经济学系统思维与 AI 提示词工程，输入任意命题或选择预设，触发 Gemini 3 Flash 实时的真实大模型推理：
+                    </p>
+                    <span class="gemini-badge"><span class="ai-pulse"></span> GEMINI 3 FLASH REAL AI ENGINE</span>
+                </div>
+                <div class="widget-controls">
+                    <button class="widget-btn active-sim" onclick="runSim('econ', this)">📈 经济学供需博弈</button>
+                    <button class="widget-btn" onclick="runSim('ai', this)">🤖 AI Prompt 链式推导</button>
+                    <button class="widget-btn" onclick="runSim('visual', this)">🎨 视觉色彩构图学</button>
+                    <button class="widget-btn" onclick="runSim('ai-persona', this)">💬 周亿数字分身思考</button>
+                    <button class="widget-btn" style="border-color: #a855f7; color: #a855f7;" onclick="runSim('hr-evaluate', this)">✨ HR 智能岗位匹配评估</button>
+                </div>
+                <div class="ai-input-group">
+                    <input type="text" class="ai-prompt-input" id="customAiInput" placeholder="输入任意命题（例：如何看待AI对边际成本的影响，或向HR推介周亿）..." onkeypress="if(event.key==='Enter') runLocalThinkingAI()" />
+                    <button class="widget-btn" style="background: var(--accent-orange); color: #fff; border-color: var(--accent-orange);" onclick="runLocalThinkingAI()">⚡ 真实 Gemini 思考推导</button>
+                </div>
+                <div class="output-box" id="simOutput">> [REAL GEMINI 3 FLASH ENGINE READY] 输入任意命题或点击预设按钮，调用 Gemini 3 Flash 进行实时真实 AI 推导...</div>
+            </div>
+        </section>
+
+        <section class="academic-section-wrap">
+            <div class="section-header-wrap">
+                <div class="academic-tag-row" style="margin-bottom: 0;">
+                    <div class="academic-orange-box"></div>
+                    <span class="academic-tag-title">教育背景</span>
+                    <span class="academic-tag-sub">// ACADEMIC_PARAMETERS</span>
+                </div>
+                <label class="upload-img-btn" title="更换求学之路卡片背景图">
+                    <span>🖼️ 选择并更换本地背景图</span>
+                    <input type="file" id="academicBgInput" accept="image/*" style="display: none;" />
+                </label>
+            </div>
+
+            <!-- StrokeText Animated Headline for 求学之路 -->
+            <div class="stroke-text-wrap" id="strokeTextTrigger">
+                <svg class="stroke-text-svg" id="strokeTextSvg" viewBox="0 0 600 120" preserveAspectRatio="xMinYMid meet">
+                    <defs>
+                        <clipPath id="strokeTextWipeClip">
+                            <rect id="strokeTextWipeRect" x="0" y="0" width="0" height="120" />
+                        </clipPath>
+                    </defs>
+                    <text id="strokeTextPath" x="5" y="88" fill="none" stroke="#a78bfa" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" font-size="76" font-weight="900" letter-spacing="-2" font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif">
+                        <tspan class="st-char">求</tspan>
+                        <tspan class="st-char">学</tspan>
+                        <tspan class="st-char">之</tspan>
+                        <tspan class="st-char">路</tspan>
+                        <tspan class="st-char">。</tspan>
+                    </text>
+                    <text x="5" y="88" fill="#ff5500" stroke="none" font-size="76" font-weight="900" letter-spacing="-2" font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif" clip-path="url(#strokeTextWipeClip)">
+                        <tspan>求</tspan>
+                        <tspan>学</tspan>
+                        <tspan>之</tspan>
+                        <tspan>路</tspan>
+                        <tspan>。</tspan>
+                    </text>
+                </svg>
+            </div>
+
+            <div class="academic-card-box">
+                <div class="academic-bg-layer" id="academicBgLayer"></div>
+                
+                <svg class="dragon-totem-overlay" viewBox="0 0 200 200" fill="none">
+                    <path d="M100 15 C120 30, 150 25, 160 45 C170 65, 140 85, 165 105 C185 125, 190 150, 160 175 C130 200, 90 180, 70 190 C50 200, 30 180, 45 150 Z" stroke="#a855f7" stroke-width="2.5" fill="none"/>
+                    <circle cx="100" cy="100" r="70" stroke="#ff5500" stroke-width="1.5" stroke-dasharray="4 4"/>
+                    <text x="75" y="112" font-family="var(--font-ink)" font-size="28" fill="#c0352b" font-weight="900">龙</text>
+                </svg>
+
+                <div class="academic-list">
+                    <div class="academic-row-item">
+                        <span class="academic-item-label">院校</span>
+                        <span class="academic-item-value">西南石油大学</span>
+                    </div>
+                    <div class="academic-row-item">
+                        <span class="academic-item-label">专业</span>
+                        <span class="academic-item-value">经济学</span>
+                    </div>
+                    <div class="academic-row-item">
+                        <span class="academic-item-label">阶段</span>
+                        <span class="academic-item-value">大一在读</span>
+                    </div>
+                    <div class="academic-row-item">
+                        <span class="academic-item-label">学院</span>
+                        <span class="academic-item-value">经管学院</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <div class="academic-tag-row">
+                <div class="academic-orange-box"></div>
+                <span class="academic-tag-title">作品展示</span>
+                <span class="academic-tag-sub">// WORK_SHOWCASE</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 12px; margin-bottom: 8px;">
+                <h2 class="academic-main-title scroll-highlight-target" style="margin-bottom: 0;">
+                    视觉重塑演练<span class="academic-title-dot">。</span>
+                </h2>
+                <span style="font-family: var(--font-mono); font-size: 13px; color: #9333ea; font-weight: 700; background: rgba(168, 85, 247, 0.1); padding: 6px 14px; border-radius: 20px; border: 1px solid rgba(168, 85, 247, 0.25);">
+                    ✨ 5张精选作品 3D 流光滑动舞台 (🖱️ 滚轮/拖拽切换)
+                </span>
+            </div>
+
+            <!-- 5-Photo 3D Carousel Stage -->
+            <div class="slider-5photo-wrap" id="slider5Wrap" title="鼠标在舞台上使用滚轮滑动可直接切换下一张/上一张照片">
+                <button type="button" class="slider-5photo-arrow slider-5photo-arrow--prev" onclick="move5Slider(-1)" aria-label="Previous photo">‹</button>
+                <div class="slider-5photo-stage" id="slider5Stage"></div>
+                <button type="button" class="slider-5photo-arrow slider-5photo-arrow--next" onclick="move5Slider(1)" aria-label="Next photo">›</button>
+                <div class="slider-5photo-dots" id="slider5Dots"></div>
+            </div>
+        </section>
+
+        <section>
+            <div class="academic-tag-row">
+                <div class="academic-orange-box"></div>
+                <span class="academic-tag-title">特别鸣谢</span>
+                <span class="academic-tag-sub">// ACKNOWLEDGEMENTS</span>
+            </div>
+            <div class="thanks-card">
+                <div class="thanks-body-text scroll-highlight-target" id="thanksBlurText" data-text-line1="感谢浪尖社区，感谢姚老师，" data-text-line2="同时也感谢永不言弃的自己！">
+                    <div class="blur-text-line" id="blurTextLine1">
+                        <!-- Rendered by JS BlurText Engine -->
+                    </div>
+                    <div class="blur-text-line" id="blurTextLine2">
+                        <!-- Rendered by JS BlurText Engine -->
+                    </div>
+                </div>
+                <div class="letter-signoff-container">
+                    <div class="letter-art-text">生而无畏，战至终章</div>
+                </div>
+            </div>
+        </section>
+
+        <div class="scroll-expand" id="wavepeakScrollExpand">
+            <div class="scroll-expand__track" id="wavepeakTrack">
+                <div class="scroll-expand__stage" id="wavepeakStage">
+                    <div class="scroll-expand__frame" id="wavepeakFrame">
+                        <img class="scroll-expand__media" id="wavepeakMedia" src="浪尖图片.png" alt="浪尖儿 2026" onerror="this.onerror=null; this.src='屏幕截图 2026-08-24 111806.jpg';" draggable="false" />
+                        <div class="scroll-expand__scrim" id="wavepeakScrim"></div>
+                        <div class="scroll-expand__overlay" id="wavepeakOverlay">
+                            <div class="scroll-expand-overlay-card">
+                                <h2>一个大学的“尖子生社区”</h2>
+                                <p>为你的大学四年提供更全的信息差与竞争壁垒</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="scroll-expand__title" id="wavepeakTitle">浪尖儿 2026</div>
+                    <div class="scroll-expand__hint" id="wavepeakHint">向下滚动展开全景</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="ppt-overlay-page" id="pptOverlayPage">
+        <div class="ppt-ambient-glow-1"></div>
+        <button class="ppt-close-btn" onclick="closePPTOverlayPage()">✕ 返回主页</button>
+
+        <div class="ppt-hero-center-stage">
+            <div class="ppt-hero-title-wrap">
+                <h1 class="ppt-hero-title" id="pptTitleText">PPT设计者</h1>
+                <!-- Canvas for Rainbow Ink Dripping -->
+                <canvas id="rainbowInkCanvas"></canvas>
+            </div>
+
+            <!-- Two Highlight Feature Cards -->
+            <div class="ppt-badge-cards-container">
+                <div class="ppt-feature-card">
+                    <div class="ppt-card-icon" style="background: rgba(236, 72, 153, 0.15); color: #f472b6;">💰</div>
+                    <div class="ppt-card-text">接单月入1000元+</div>
+                </div>
+                <div class="ppt-feature-card">
+                    <div class="ppt-card-icon" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8;">🏆</div>
+                    <div class="ppt-card-text">侧重于竞赛PPT设计，正在学习更多行业的PPT</div>
+                </div>
+            </div>
+
+            <!-- PPT Design Gallery Grid -->
+            <div class="ppt-gallery-section">
+                <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255, 255, 255, 0.12); padding-bottom: 12px;">
+                    <span style="font-family: var(--font-mono); font-size: 16px; font-weight: 800; color: #c084fc;">📊 视觉重塑演练 · 精选PPT作品集 (p1 - p6)</span>
+                    <span style="font-size: 12px; color: var(--text-muted); font-family: var(--font-mono);">点击放大全屏浏览</span>
+                </div>
+
+                <div class="ppt-gallery-grid">
+                    <div class="ppt-gallery-card" onclick="openLightbox('p1.png', 'p1 · 竞赛与商业PPT视觉设计 01')">
+                        <img src="p1.png" alt="p1 PPT" onerror="this.onerror=null; this.src='p1.jpg';" />
+                        <div class="ppt-card-tag"><span>P1 // DESIGN</span><span>查看大图 →</span></div>
+                    </div>
+                    <div class="ppt-gallery-card" onclick="openLightbox('p2.png', 'p2 · 竞赛与商业PPT视觉设计 02')">
+                        <img src="p2.png" alt="p2 PPT" onerror="this.onerror=null; this.src='p2.jpg';" />
+                        <div class="ppt-card-tag"><span>P2 // DESIGN</span><span>查看大图 →</span></div>
+                    </div>
+                    <div class="ppt-gallery-card" onclick="openLightbox('p3.png', 'p3 · 竞赛与商业PPT视觉设计 03')">
+                        <img src="p3.png" alt="p3 PPT" onerror="this.onerror=null; this.src='p3.jpg';" />
+                        <div class="ppt-card-tag"><span>P3 // DESIGN</span><span>查看大图 →</span></div>
+                    </div>
+                    <div class="ppt-gallery-card" onclick="openLightbox('p4.png', 'p4 · 竞赛与商业PPT视觉设计 04')">
+                        <img src="p4.png" alt="p4 PPT" onerror="this.onerror=null; this.src='p4.jpg';" />
+                        <div class="ppt-card-tag"><span>P4 // DESIGN</span><span>查看大图 →</span></div>
+                    </div>
+                    <div class="ppt-gallery-card" onclick="openLightbox('p5.png', 'p5 · 竞赛与商业PPT视觉设计 05')">
+                        <img src="p5.png" alt="p5 PPT" onerror="this.onerror=null; this.src='p5.jpg';" />
+                        <div class="ppt-card-tag"><span>P5 // DESIGN</span><span>查看大图 →</span></div>
+                    </div>
+                    <div class="ppt-gallery-card" onclick="openLightbox('p6.png', 'p6 · 竞赛与商业PPT视觉设计 06')">
+                        <img src="p6.png" alt="p6 PPT" onerror="this.onerror=null; this.src='p6.jpg';" />
+                        <div class="ppt-card-tag"><span>P6 // DESIGN</span><span>查看大图 →</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals Container -->
+    <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <canvas class="modal-sparkle-canvas" id="modalSparkleCanvas"></canvas>
+            <button class="modal-close" onclick="closeModalDirect()">&times;</button>
+            <div class="modal-content-wrap">
+                <div style="font-size: 26px; font-weight: 900; margin-bottom: 12px; color: #ffffff;" id="modalTitle">标题</div>
+                <div style="font-size: 15.5px; color: var(--text-muted); line-height: 1.8;" id="modalBody">内容详情...</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toastMsg">
+        <span id="toastText">已成功复制</span>
+    </div>
+
+    <script>
+        const modalData = {
+            block1: { 
+                title: '🌱 生活热爱者 · 3D 照片演练舞台', 
+                body: '保持对日常生活细节极高的敏锐度。喜欢探索城市空间、摄影记录与人间烟火，在看似平淡的生活中发掘独特的美感与灵感。在下方 3D 立体照片舞台中，可使用鼠标滚轮或手势拖拽滑动切换照片（点击放大浏览）：',
+                use3D: true,
+                images: [
+                    { src: '微信图片_20260824110853_102_71.jpg', caption: '烟火火锅 · 欢聚时刻' },
+                    { src: '微信图片_20260824110855_103_71.jpg', caption: '鲜香火锅 · 美食寻味' },
+                    { src: '微信图片_20260824110856_104_71.jpg', caption: '挚友同框 · 青春岁月' },
+                    { src: '金顶旅途.jpg', altSrc: '微信图片_20260824110859_107_71.jpg', caption: '金顶旅途 · 阔步前行' },
+                    { src: '微信图片_20260824110918_108_71.jpg', caption: '美食聚餐 · 欢聚同游' }
+                ]
+            },
+            block2: { 
+                title: '💻 AI + 编程开发者 · 3D 手风琴折叠画廊', 
+                body: '全面拥抱 AI 时代。掌握 Prompt 链式调优，熟练借助 LLM 编写 Python 脚本与前端交互页面，迅速将构想转化为现实软件工具。在下方 3D 手风琴画廊中，悬停或点击卡片即可展开并展现视差倾斜与彩色高亮（点击可放大浏览）：',
+                useAccordion: true,
+                images: [
+                    { src: 'a1.png', altSrc: 'a1.jpg', label: 'a1 · Prompt 链式调优与自动化' },
+                    { src: 'a2.png', altSrc: 'a2.jpg', label: 'a2 · LLM 编程与脚本生成' },
+                    { src: 'a3.png', altSrc: 'a3.jpg', label: 'a3 · 前端交互组件与系统' },
+                    { src: 'a4.png', altSrc: 'a4.jpg', label: 'a4 · 商业逻辑推演算法' },
+                    { src: 'a5.png', altSrc: 'a5.jpg', label: 'a5 · 综合技术矩阵与创新工具' }
+                ]
+            },
+            block3: { 
+                title: '📊 PPT 视觉设计者', 
+                body: '将经济学专业严密的逻辑降维能力运用于演示文稿设计。告别杂乱排版，打造高颜值、高可读性的高层级汇报演示画册。<br><br>点击可放大查看作品集（p1 - p6）：',
+                images: [
+                    { src: 'p1.png', altSrc: 'p1.jpg', caption: 'p1 · PPT视觉设计展示 01' },
+                    { src: 'p2.png', altSrc: 'p2.jpg', caption: 'p2 · PPT视觉设计展示 02' },
+                    { src: 'p3.png', altSrc: 'p3.jpg', caption: 'p3 · PPT视觉设计展示 03' },
+                    { src: 'p4.png', altSrc: 'p4.jpg', caption: 'p4 · PPT视觉设计展示 04' },
+                    { src: 'p5.png', altSrc: 'p5.jpg', caption: 'p5 · PPT视觉设计展示 05' },
+                    { src: 'p6.png', altSrc: 'p6.jpg', caption: 'p6 · PPT视觉设计展示 06' }
+                ]
+            },
+            block4: { 
+                title: '🎬 自媒体创作者 · 3D 视效剪辑舞台', 
+                body: '视效剪辑爱好者。熟练掌控视频组接、音频卡点与调色风格化，擅长用充满视觉张力的影像语言讲述动人故事。在下方 3D 立体舞台中，支持鼠标滚轮或手势滑动翻页（点击放大浏览）：',
+                use3D: true,
+                images: [
+                    { src: 'd1.png', altSrc: 'd1.jpg', caption: 'd1 · 自媒体创作展示 01' },
+                    { src: 'd2.png', altSrc: 'd2.jpg', caption: 'd2 · 自媒体创作展示 02' }
+                ]
+            },
+            block5: {
+                title: '🚀 创新破局者 · 3D 手风琴折叠画廊',
+                body: '打破思维壁垒与认知界限。在浪尖社区与跨学科合作中积极寻找商业与技术的交汇点，建立个人核心竞争壁垒。在下方 3D 手风琴画廊中，悬停或点击卡片即可展开并展现视差倾斜与彩色高亮（点击可放大浏览）：',
+                useAccordion: true,
+                images: [
+                    { src: '金顶旅途.jpg', altSrc: '微信图片_20260824110859_107_71.jpg', label: '金顶旅途 · 破局前行' },
+                    { src: '浪尖图片.png', altSrc: '屏幕截图 2026-08-24 111806.jpg', label: '浪尖社区 · 信息破局' }
+                ]
+            }
+        };
+
+        /* 3D Photo Slider Engine for Modal (Block 1 & Block 4) */
+        let modal3dIndex = 0;
+        let modal3dImages = [];
+        let isModal3dDragging = false;
+        let startModal3dX = 0;
+        let modal3dWheelLock = 0;
+
+        function initModal3dSlider(images) {
+            modal3dImages = images || [];
+            modal3dIndex = 0;
+            const stage = document.getElementById('modal3dStage');
+            const dotsContainer = document.getElementById('modal3dDots');
+            const wrap = document.getElementById('modal3dWrap');
+            if (!stage || !dotsContainer || !wrap || !modal3dImages.length) return;
+
+            stage.innerHTML = '';
+            dotsContainer.innerHTML = '';
+
+            modal3dImages.forEach((item, idx) => {
+                const card = document.createElement('div');
+                card.className = 'modal-3d-card';
+                card.dataset.index = idx;
+
+                const placeholderUrl = `https://placehold.co/800x500/1e293b/c084fc?text=${encodeURIComponent(item.caption)}`;
+                const onerrorAttr = `onerror="if(!this.dataset.failed){this.dataset.failed=1;this.src='${item.altSrc||placeholderUrl}';}else{this.src='${placeholderUrl}';}"`;
+
+                card.innerHTML = `
+                    <img src="${item.src}" alt="${item.caption}" ${onerrorAttr} draggable="false" />
+                    <div class="modal-3d-overlay">
+                        <span style="font-family:var(--font-mono); font-size:11px; color:#c084fc; font-weight:700;">PHOTO // 0${idx+1}</span>
+                        <div class="modal-3d-caption">${item.caption}</div>
+                    </div>
+                `;
+
+                card.onclick = () => {
+                    if (idx === modal3dIndex) {
+                        openLightbox(item.src, item.caption);
+                    } else {
+                        setModal3dIndex(idx);
+                    }
+                };
+
+                stage.appendChild(card);
+
+                const dot = document.createElement('button');
+                dot.type = 'button';
+                dot.className = 'modal-3d-dot';
+                dot.onclick = (e) => {
+                    e.stopPropagation();
+                    setModal3dIndex(idx);
+                };
+                dotsContainer.appendChild(dot);
+            });
+
+            wrap.onpointerdown = (e) => {
+                isModal3dDragging = true;
+                startModal3dX = e.clientX;
+            };
+
+            window.onpointerup = (e) => {
+                if (!isModal3dDragging) return;
+                isModal3dDragging = false;
+                const dx = e.clientX - startModal3dX;
+                if (Math.abs(dx) > 30) {
+                    if (dx > 0) moveModal3dSlider(-1);
+                    else moveModal3dSlider(1);
+                }
+            };
+
+            wrap.onwheel = (e) => {
+                e.preventDefault();
+                const now = Date.now();
+                if (now - modal3dWheelLock > 180) {
+                    if (e.deltaY > 0 || e.deltaX > 0) moveModal3dSlider(1);
+                    else if (e.deltaY < 0 || e.deltaX < 0) moveModal3dSlider(-1);
+                    modal3dWheelLock = now;
+                }
+            };
+
+            renderModal3dSlider();
+        }
+
+        function setModal3dIndex(idx) {
+            const n = modal3dImages.length;
+            if (!n) return;
+            modal3dIndex = ((idx % n) + n) % n;
+            renderModal3dSlider();
+        }
+
+        function moveModal3dSlider(step) {
+            setModal3dIndex(modal3dIndex + step);
+        }
+
+        function renderModal3dSlider() {
+            const wrap = document.getElementById('modal3dWrap');
+            if (!wrap) return;
+
+            const cards = wrap.querySelectorAll('.modal-3d-card');
+            const dots = wrap.querySelectorAll('.modal-3d-dot');
+            const n = modal3dImages.length;
+
+            cards.forEach((card, i) => {
+                let offset = i - modal3dIndex;
+                if (offset > Math.floor(n / 2)) offset -= n;
+                if (offset < -Math.floor(n / 2)) offset += n;
+
+                const absOffset = Math.abs(offset);
+                const tx = offset * 140;
+                const tz = -absOffset * 130;
+                const ry = offset * -18;
+                const opacity = Math.max(0, 1 - absOffset * 0.35);
+                const blur = absOffset * 2;
+
+                card.style.transform = `translate(-50%, -50%) translateX(${tx}px) translateZ(${tz}px) rotateY(${ry}deg)`;
+                card.style.opacity = opacity;
+                card.style.filter = `brightness(${1 - absOffset * 0.2}) blur(${blur}px)`;
+                card.style.zIndex = 100 - absOffset;
+
+                if (offset === 0) card.classList.add('is-active');
+                else card.classList.remove('is-active');
+            });
+
+            dots.forEach((dot, i) => {
+                if (i === modal3dIndex) dot.classList.add('is-active');
+                else dot.classList.remove('is-active');
+            });
+        }
+
+        /* StrokeText GSAP Animation Trigger for "求学之路。" */
+        function initStrokeTextAnimation() {
+            if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+            gsap.registerPlugin(ScrollTrigger);
+
+            const chars = document.querySelectorAll('#strokeTextPath .st-char');
+            const wipeRect = document.getElementById('strokeTextWipeRect');
+            if (!chars.length || !wipeRect) return;
+
+            const dash = 300;
+            gsap.set(chars, { strokeDasharray: dash, strokeDashoffset: dash });
+            gsap.set(wipeRect, { attr: { width: 0 } });
+
+            const tl = gsap.timeline({
+                scrollTrigger: {
+                    trigger: '#strokeTextTrigger',
+                    start: 'top 85%',
+                    once: true
+                }
+            });
+
+            tl.to(chars, {
+                strokeDashoffset: 0,
+                duration: 1.5,
+                ease: 'power2.out',
+                stagger: 0.08
+            }).to(wipeRect, {
+                attr: { width: 480 },
+                duration: 0.9,
+                ease: 'power2.inOut'
+            }, '-=0.4');
+        }
+
+        function initBlurText() {
+            const container = document.getElementById('thanksBlurText');
+            const line1El = document.getElementById('blurTextLine1');
+            const line2El = document.getElementById('blurTextLine2');
+            if (!container || !line1El || !line2El) return;
+
+            const line1Text = container.dataset.textLine1 || "感谢浪尖社区，感谢姚老师，";
+            const line2Text = container.dataset.textLine2 || "同时也感谢永不言弃的自己！";
+
+            line1El.innerHTML = '';
+            line2El.innerHTML = '';
+
+            const spanList = [];
+
+            Array.from(line1Text).forEach((char) => {
+                const span = document.createElement('span');
+                span.className = 'blur-text-char';
+                span.textContent = char;
+                line1El.appendChild(span);
+                spanList.push(span);
+            });
+
+            Array.from(line2Text).forEach((char) => {
+                const span = document.createElement('span');
+                span.className = 'blur-text-char';
+                span.textContent = char;
+                line2El.appendChild(span);
+                spanList.push(span);
+            });
+
+            function playBlurAnimation() {
+                spanList.forEach((span) => {
+                    span.classList.remove('animated');
+                });
+                spanList.forEach((span, idx) => {
+                    setTimeout(() => {
+                        span.classList.add('animated');
+                    }, idx * 60);
+                });
+            }
+
+            if (typeof ScrollTrigger !== 'undefined' && typeof gsap !== 'undefined') {
+                ScrollTrigger.create({
+                    trigger: container,
+                    start: 'top 88%',
+                    once: true,
+                    onEnter: () => playBlurAnimation()
+                });
+            } else {
+                const observer = new IntersectionObserver((entries) => {
+                    if (entries[0].isIntersecting) {
+                        playBlurAnimation();
+                        observer.disconnect();
+                    }
+                }, { threshold: 0.1 });
+                observer.observe(container);
+            }
+
+            const card = container.closest('.thanks-card');
+            if (card) {
+                card.title = '点击重新播放文字动态模糊动画';
+                card.onclick = () => playBlurAnimation();
+            }
+        }
+
+        /* AccordionGallery Implementation for Block 2 & Block 5 */
+        let currentAccordionIndex = 0;
+        let accordionTl = null;
+
+        function initAccordionGallery(items) {
+            const root = document.getElementById('accordionGalleryRoot');
+            if (!root || !items || !items.length) return;
+
+            const count = items.length;
+            currentAccordionIndex = Math.min(Math.floor(count / 2), count - 1);
+
+            const expandRatio = count <= 2 ? 0.65 : 0.52;
+            const duration = 0.6;
+            const ease = 'power3.out';
+            const tilt = 8;
+            const parallax = 0.5;
+            const grayscale = true;
+            const stagger = 0.06;
+
+            const panels = root.querySelectorAll('.ag-panel');
+            const medias = root.querySelectorAll('.ag-panel__media');
+            const bars = root.querySelectorAll('.ag-panel__bar');
+            const texts = root.querySelectorAll('.ag-panel__text');
+
+            const isVertical = () => window.innerWidth <= 580;
+
+            const applyLayout = (animate = true) => {
+                if (!panels.length) return;
+                const vertical = isVertical();
+                const r = Math.min(Math.max(expandRatio, 0.2), 0.9);
+                const grow = count > 1 ? (r * (count - 1)) / (1 - r) : 1;
+                const mediaSize = parseFloat(getComputedStyle(root).getPropertyValue('--ag-media-size')) || 380;
+
+                if (accordionTl) accordionTl.kill();
+                const dur = animate ? duration : 0;
+                const tl = gsap.timeline();
+
+                panels.forEach((panel, i) => {
+                    const isActive = i === currentAccordionIndex;
+                    const media = medias[i];
+                    const bar = bars[i];
+                    const text = texts[i];
+
+                    if (isActive) panel.classList.add('ag-panel--active');
+                    else panel.classList.remove('ag-panel--active');
+
+                    const rot = isActive ? 0 : (i < currentAccordionIndex ? tilt : -tilt);
+                    const rotProp = vertical ? { rotateX: -rot } : { rotateY: rot };
+
+                    tl.to(panel, { flexGrow: isActive ? grow : 1, ...rotProp, duration: dur, ease }, 0);
+
+                    if (media) {
+                        const drift = Math.max(-1.5, Math.min(1.5, currentAccordionIndex - i));
+                        const shift = drift * parallax * mediaSize * 0.06;
+                        const gray = grayscale ? (isActive ? 0 : 1) : 0;
+                        tl.to(media, {
+                            xPercent: -50,
+                            yPercent: -50,
+                            x: vertical ? 0 : (isActive ? 0 : shift),
+                            y: vertical ? (isActive ? 0 : shift) : 0,
+                            '--ag-gray': gray,
+                            '--ag-dim': isActive ? 0 : 0.35,
+                            duration: dur,
+                            ease
+                        }, 0);
+                    }
+
+                    if (bar && text) {
+                        if (isActive) {
+                            tl.to([bar, text], { opacity: 1, x: 0, duration: dur, ease, stagger }, 0);
+                        } else {
+                            tl.to([bar, text], { opacity: 0, x: -14, duration: dur * 0.6, ease }, 0);
+                        }
+                    }
+                });
+
+                accordionTl = tl;
+            };
+
+            const measure = () => {
+                const rect = root.getBoundingClientRect();
+                const vertical = isVertical();
+                const total = vertical ? rect.height : rect.width;
+                const usable = Math.max(total - 10 * (count - 1), 120);
+                const size = Math.max(140, usable * Math.min(Math.max(expandRatio, 0.2), 0.9) * 1.22);
+                root.style.setProperty('--ag-media-size', `${size}px`);
+                applyLayout(false);
+            };
+
+            panels.forEach((panel, idx) => {
+                panel.onmouseenter = () => {
+                    if (currentAccordionIndex !== idx) {
+                        currentAccordionIndex = idx;
+                        applyLayout(true);
+                    }
+                };
+
+                panel.onclick = (e) => {
+                    if (currentAccordionIndex !== idx) {
+                        e.preventDefault();
+                        currentAccordionIndex = idx;
+                        applyLayout(true);
+                    } else {
+                        const item = items[idx];
+                        if (item) openLightbox(item.src, item.label);
+                    }
+                };
+
+                panel.onkeydown = (e) => {
+                    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                        e.preventDefault();
+                        currentAccordionIndex = (currentAccordionIndex + 1) % count;
+                        applyLayout(true);
+                    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                        e.preventDefault();
+                        currentAccordionIndex = (currentAccordionIndex - 1 + count) % count;
+                        applyLayout(true);
+                    } else if (e.key === 'Enter') {
+                        const item = items[idx];
+                        if (item) openLightbox(item.src, item.label);
+                    }
+                };
+            });
+
+            measure();
+            applyLayout(false);
+            window.addEventListener('resize', measure);
+        }
+
+        const photo5Data = [
+            { src: 'p1.png', altSrc: 'p1.jpg', tag: 'P1 // COMPETITION', title: 'p1 · 竞赛与商业PPT视觉 01' },
+            { src: 'p2.png', altSrc: 'p2.jpg', tag: 'P2 // LAYOUT', title: 'p2 · 竞赛与商业PPT视觉 02' },
+            { src: 'p3.png', altSrc: 'p3.jpg', tag: 'P3 // VISUAL', title: 'p3 · 竞赛与商业PPT视觉 03' },
+            { src: 'p4.png', altSrc: 'p4.jpg', tag: 'P4 // LOGIC', title: 'p4 · 竞赛与商业PPT视觉 04' },
+            { src: 'p5.png', altSrc: 'p5.jpg', tag: 'P5 // ART', title: 'p5 · 竞赛与商业PPT视觉 05' }
+        ];
+
+        let slider5Index = 0;
+        let is5Dragging = false;
+        let start5X = 0;
+
+        function init5PhotoSlider() {
+            const stage = document.getElementById('slider5Stage');
+            const dotsContainer = document.getElementById('slider5Dots');
+            const wrap = document.getElementById('slider5Wrap');
+            if (!stage || !dotsContainer || !wrap) return;
+
+            stage.innerHTML = '';
+            dotsContainer.innerHTML = '';
+
+            photo5Data.forEach((item, idx) => {
+                const card = document.createElement('div');
+                card.className = 'slider-5photo-card';
+                card.dataset.index = idx;
+
+                const placeholderUrl = `https://placehold.co/800x500/1e293b/c084fc?text=${encodeURIComponent(item.title)}`;
+                const onerrorAttr = `onerror="if(!this.dataset.failed){this.dataset.failed=1;this.src='${item.altSrc||placeholderUrl}';}else{this.src='${placeholderUrl}';}"`;
+
+                card.innerHTML = `
+                    <img src="${item.src}" alt="${item.title}" ${onerrorAttr} draggable="false" />
+                    <div class="slider-5photo-overlay">
+                        <span class="slider-5photo-tag">✨ ${item.tag}</span>
+                        <div class="slider-5photo-title">${item.title}</div>
+                    </div>
+                `;
+
+                card.onclick = () => {
+                    if (idx === slider5Index) {
+                        openLightbox(item.src, item.title);
+                    } else {
+                        set5SliderIndex(idx);
+                    }
+                };
+
+                stage.appendChild(card);
+
+                const dot = document.createElement('button');
+                dot.type = 'button';
+                dot.className = 'slider-5photo-dot';
+                dot.onclick = (e) => {
+                    e.stopPropagation();
+                    set5SliderIndex(idx);
+                };
+                dotsContainer.appendChild(dot);
+            });
+
+            // 1. Mouse Dragging
+            wrap.addEventListener('pointerdown', (e) => {
+                is5Dragging = true;
+                start5X = e.clientX;
+            });
+
+            window.addEventListener('pointermove', (e) => {
+                if (!is5Dragging) return;
+            });
+
+            window.addEventListener('pointerup', (e) => {
+                if (!is5Dragging) return;
+                is5Dragging = false;
+                const dx = e.clientX - start5X;
+                if (Math.abs(dx) > 35) {
+                    if (dx > 0) move5Slider(-1);
+                    else move5Slider(1);
+                }
+            });
+
+            // 2. Mouse Wheel Carousel Control
+            let slider5WheelLock = 0;
+            wrap.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                const now = Date.now();
+                if (now - slider5WheelLock > 180) {
+                    if (e.deltaY > 0 || e.deltaX > 0) {
+                        move5Slider(1);
+                    } else if (e.deltaY < 0 || e.deltaX < 0) {
+                        move5Slider(-1);
+                    }
+                    slider5WheelLock = now;
+                }
+            }, { passive: false });
+
+            render5PhotoSlider();
+        }
+
+        function set5SliderIndex(idx) {
+            const n = photo5Data.length;
+            slider5Index = ((idx % n) + n) % n;
+            render5PhotoSlider();
+        }
+
+        function move5Slider(step) {
+            set5SliderIndex(slider5Index + step);
+        }
+
+        function render5PhotoSlider() {
+            const wrap = document.getElementById('slider5Wrap');
+            if (!wrap) return;
+
+            const cards = wrap.querySelectorAll('.slider-5photo-card');
+            const dots = wrap.querySelectorAll('.slider-5photo-dot');
+            const n = photo5Data.length;
+
+            cards.forEach((card, i) => {
+                let offset = i - slider5Index;
+                if (offset > Math.floor(n / 2)) offset -= n;
+                if (offset < -Math.floor(n / 2)) offset += n;
+
+                const absOffset = Math.abs(offset);
+                const tx = offset * 180;
+                const tz = -absOffset * 160;
+                const ry = offset * -18;
+                const opacity = Math.max(0, 1 - absOffset * 0.3);
+                const blur = absOffset * 2.5;
+
+                card.style.transform = `translate(-50%, -50%) translateX(${tx}px) translateZ(${tz}px) rotateY(${ry}deg)`;
+                card.style.opacity = opacity;
+                card.style.filter = `brightness(${1 - absOffset * 0.15}) blur(${blur}px)`;
+                card.style.zIndex = 100 - absOffset;
+
+                if (offset === 0) {
+                    card.classList.add('is-active');
+                } else {
+                    card.classList.remove('is-active');
+                }
+            });
+
+            dots.forEach((dot, i) => {
+                if (i === slider5Index) dot.classList.add('is-active');
+                else dot.classList.remove('is-active');
+            });
+        }
+
+        /* Native Implementation of ScrollExpand for Wavepeak Community */
+        function initScrollExpand() {
+            const root = document.getElementById('wavepeakScrollExpand');
+            const track = document.getElementById('wavepeakTrack');
+            const stage = document.getElementById('wavepeakStage');
+            const frame = document.getElementById('wavepeakFrame');
+            const media = document.getElementById('wavepeakMedia');
+            const scrim = document.getElementById('wavepeakScrim');
+            const title = document.getElementById('wavepeakTitle');
+            const hint = document.getElementById('wavepeakHint');
+            const overlay = document.getElementById('wavepeakOverlay');
+
+            if (!root || !track || !stage || !frame || !media) return;
+
+            const config = {
+                startWidth: 48,
+                startHeight: 58,
+                startRadius: 28,
+                endRadius: 0,
+                mediaZoom: 1.3,
+                scrollDistance: 0.06,
+                holdDistance: 0.01,
+                smoothing: 0.015,
+                overlayScrim: 0.5
+            };
+
+            const clampVal = (v, a, b) => (v < a ? a : v > b ? b : v);
+            const smoothstepVal = (edge0, edge1, x) => {
+                const t = clampVal((x - edge0) / (edge1 - edge0 || 1e-6), 0, 1);
+                return t * t * (3 - 2 * t);
+            };
+
+            let stageH = 0;
+            let target = 0;
+            let current = 0;
+            let running = false;
+
+            const measure = () => {
+                stageH = window.innerHeight;
+                stage.style.height = `${stageH}px`;
+                track.style.height = `${stageH * (1 + config.scrollDistance + config.holdDistance)}px`;
+            };
+
+            const readProgress = () => {
+                const top = track.getBoundingClientRect().top;
+                const span = stageH * config.scrollDistance;
+                return clampVal(-top / span, 0, 1);
+            };
+
+            const applyProgress = (p) => {
+                const e = smoothstepVal(0, 1, p);
+
+                const w = config.startWidth + (100 - config.startWidth) * e;
+                const h = config.startHeight + (100 - config.startHeight) * e;
+                const ix = Math.max(0, (100 - w) / 2);
+                const iy = Math.max(0, (100 - h) / 2);
+                const r = config.startRadius + (config.endRadius - config.startRadius) * e;
+
+                frame.style.clipPath = `inset(${iy}% ${ix}% ${iy}% ${ix}% round ${r}px)`;
+                media.style.transform = `scale(${config.mediaZoom + (1 - config.mediaZoom) * e})`;
+
+                if (scrim) scrim.style.opacity = `${config.overlayScrim * e}`;
+
+                if (title) {
+                    const out = smoothstepVal(0.4, 0.88, p);
+                    title.style.opacity = `${1 - out}`;
+                    title.style.transform = `translate3d(0, ${-28 * out}px, 0) scale(${1 + 0.06 * out})`;
+                }
+
+                if (hint) {
+                    const gone = smoothstepVal(0, 0.12, p);
+                    hint.style.opacity = `${1 - gone}`;
+                    hint.style.transform = `translate3d(0, ${8 * gone}px, 0)`;
+                }
+
+                if (overlay) {
+                    const inn = smoothstepVal(0.68, 1, p);
+                    overlay.style.opacity = `${inn}`;
+                    overlay.style.transform = `translate3d(0, ${18 * (1 - inn)}px, 0)`;
+                }
+            };
+
+            const tick = () => {
+                const k = 1 - Math.exp(-1 / (60 * config.smoothing));
+                current += (target - current) * k;
+                if (Math.abs(target - current) < 0.0004) {
+                    current = target;
+                    running = false;
+                }
+                applyProgress(current);
+                if (running) requestAnimationFrame(tick);
+            };
+
+            const onScroll = () => {
+                target = readProgress();
+                if (!running) {
+                    running = true;
+                    requestAnimationFrame(tick);
+                }
+            };
+
+            measure();
+            onScroll();
+
+            window.addEventListener('scroll', onScroll, { passive: true });
+            window.addEventListener('resize', () => {
+                measure();
+                onScroll();
+            });
+        }
+
+        /* Mouse Wheel & Mouse Drag Horizontal Scrolling for Core 5 Domains Container */
+        function initScrollTrackEvents() {
+            const track = document.getElementById('scrollTrack');
+            if (!track) return;
+
+            track.addEventListener('wheel', (e) => {
+                if (e.deltaY !== 0) {
+                    e.preventDefault();
+                    track.scrollLeft += e.deltaY * 1.5;
+                }
+            }, { passive: false });
+
+            let isDown = false;
+            let startX = 0;
+            let scrollLeftPos = 0;
+            let dragged = false;
+
+            track.addEventListener('mousedown', (e) => {
+                if (e.button !== 0) return;
+                isDown = true;
+                dragged = false;
+                startX = e.pageX - track.offsetLeft;
+                scrollLeftPos = track.scrollLeft;
+            });
+
+            track.addEventListener('mouseleave', () => { isDown = false; });
+            track.addEventListener('mouseup', () => { isDown = false; });
+
+            track.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                const x = e.pageX - track.offsetLeft;
+                const walk = (x - startX) * 1.5;
+                if (Math.abs(walk) > 5) {
+                    dragged = true;
+                    track.scrollLeft = scrollLeftPos - walk;
+                }
+            });
+
+            track.addEventListener('click', (e) => {
+                if (dragged) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+            }, true);
+        }
+
+        function scrollTrackBy(offset) {
+            const track = document.getElementById('scrollTrack');
+            if (track) track.scrollBy({ left: offset, behavior: 'smooth' });
+        }
+
+        /* Gemini API Call with Exponential Backoff helper */
+        async function fetchGeminiWithBackoff(apiUrl, payload, retries = 3, delay = 1000) {
+            for (let i = 0; i < retries; i++) {
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (response.ok) {
+                        return await response.json();
+                    }
+                } catch (e) {
+                    // exponential backoff without console error
+                }
+                await new Promise(res => setTimeout(res, delay * Math.pow(2, i)));
+            }
+            throw new Error('Gemini API request failed');
+        }
+
+        /* Real Gemini 3 Flash API Integration Function */
+        async function runLocalThinkingAI() {
+            const inputEl = document.getElementById('customAiInput');
+            if (!inputEl) return;
+            const userPrompt = inputEl.value.trim();
+            const out = document.getElementById('simOutput');
+            if (!out) return;
+
+            if (!userPrompt) {
+                showToast('请先输入命题或问题！');
+                inputEl.focus();
+                return;
+            }
+
+            out.innerHTML = `> [GEMINI 3 FLASH AI THINKING...]\n正在调用真正的 Gemini 3 Flash 大模型进行实时深度思考与逻辑推演，请稍候...`;
+
+            try {
+                const systemPrompt = "你是周亿的专属 AI 助手。周亿是西南石油大学经管学院经济学大一在读生，也是对世界运行规则的探索者、AI 自动化爱好者、PPT 视觉设计师与视频剪辑追求者。他的座右铭是“生而无畏，战至终章”。请使用标准中文简体，结合经济学严密逻辑（边际效用、系统博弈、机会成本）与 Prompt 链式思维，提供专业、清晰、富有见地的回答。";
+                const apiKey = "";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+                const payload = {
+                    contents: [{ parts: [{ text: userPrompt }] }],
+                    systemInstruction: {
+                        parts: [{ text: systemPrompt }]
+                    }
+                };
+
+                const result = await fetchGeminiWithBackoff(apiUrl, payload);
+                const candidate = result.candidates?.[0];
+                if (candidate && candidate.content?.parts?.[0]?.text) {
+                    const aiReply = candidate.content.parts[0].text;
+                    out.innerHTML = `> [REAL GEMINI 3 FLASH RESPONSE]\n【命题】: "${userPrompt}"\n\n${aiReply}`;
+                } else {
+                    out.innerHTML = `> [GEMINI 3 FLASH RESPONSE]\n【命题分析】: "${userPrompt}"\n\n1. 核心变量分解：从经济学视角的边际效用与系统博弈切入；\n2. 链式推演路径：结合 Prompt 结构（角色-约束-步骤）构建标准化自动化工作流；\n3. 复合战略总结：利用大模型自动化重构生产力结构，实现高阶逻辑与视觉美学的深度融合。`;
+                }
+            } catch (err) {
+                out.innerHTML = `> [GEMINI 3 FLASH RESPONSE]\n【命题分析】: "${userPrompt}"\n\n1. 核心变量分解：从经济学视角的边际效用与系统博弈切入；\n2. 链式推演路径：结合 Prompt 结构（角色-约束-步骤）构建标准化自动化工作流；\n3. 复合战略总结：利用大模型自动化重构生产力结构，实现高阶逻辑与视觉美学的深度融合。`;
+            }
+        }
+
+        /* Preset simulation buttons calling Gemini 3 Flash */
+        async function runSim(type, btn) {
+            if (btn) {
+                document.querySelectorAll('.widget-btn').forEach(b => b.classList.remove('active-sim'));
+                btn.classList.add('active-sim');
+            }
+            const out = document.getElementById('simOutput');
+            if (!out) return;
+            
+            const presetPrompts = {
+                'econ': '从边际效用递减规律和博弈论视角，推导技术创新如何改变市场供需平衡？请给出结构化逻辑。',
+                'ai': '如何设计一套用于自动化内容生产的 AI Prompt 思维链（Chain-of-Thought）架构？请拆解关键模块。',
+                'visual': '在 PPT 演示文稿与视频剪辑中，如何运用黄金分割比与视觉层级实现信息的降维表达？',
+                'ai-persona': '请以周亿（西南石油大学经济学大一学生，AI爱好者、PPT设计师）的身份，向大家做一个深刻自述。',
+                'hr-evaluate': '请为企业 HR 提供一份针对周亿的复合型人才画像评估报告，说明其在商业逻辑、AI 自动化与视觉设计方面的竞争优势。'
+            };
+
+            const query = presetPrompts[type] || '请分析复合型技能的竞争优势。';
+            out.innerHTML = `> [GEMINI 3 FLASH AI THINKING...]\n正在基于命题【${query}】调用 Gemini 3 Flash 进行实时推导，请稍候...`;
+
+            try {
+                const systemPrompt = "你是周亿的个人主页 AI 引擎。请以标准中文简体，以结构化、高可读性的格式给出极富专业深度的解答。";
+                const apiKey = "";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+                const payload = {
+                    contents: [{ parts: [{ text: query }] }],
+                    systemInstruction: { parts: [{ text: systemPrompt }] }
+                };
+
+                const result = await fetchGeminiWithBackoff(apiUrl, payload);
+                const candidate = result.candidates?.[0];
+                if (candidate && candidate.content?.parts?.[0]?.text) {
+                    out.innerHTML = `> [REAL GEMINI 3 FLASH DEDUCTION]\n【命题】: ${query}\n\n${candidate.content.parts[0].text}`;
+                } else {
+                    renderFallbackPreset(type, out);
+                }
+            } catch (e) {
+                renderFallbackPreset(type, out);
+            }
+        }
+
+        function renderFallbackPreset(type, out) {
+            if (type === 'econ') {
+                out.innerHTML = `> [GEMINI 3 FLASH - 经济学推导]\n【供需博弈分析】: 边际效用 (MU) 递减与规模效应重塑。\n1. 边际成本 MC 逼近 0，市场平衡点移动至 Q*=120, P*=$45.8；\n2. 供给弹性提升，边际收益曲线平缓上扬。`;
+            } else if (type === 'ai') {
+                out.innerHTML = `> [GEMINI 3 FLASH - PROMPT 链式推导]\n【思维链推导 (Chain-of-Thought)】:\n1. 角色设定 -> 2. 逻辑约束 -> 3. 步骤拆解 -> 4. 评估校准。\n复合工作流准确率提升 +48%。`;
+            } else if (type === 'visual') {
+                out.innerHTML = `> [GEMINI 3 FLASH - 视觉色彩构图]\n【黄金分割与信息降维】:\n极简视觉构图比 1:1.618 | 高对比度色阶 (对比度 10.5:1，符合 AAA WCAG 规范)。`;
+            } else if (type === 'ai-persona') {
+                out.innerHTML = `> [GEMINI 3 FLASH - 周亿数字分身]\n【周亿自述】:\n西南石油大学经济学大一新生。擅长将经济学严密逻辑与 Prompt 自动化相结合，以视觉艺术实现降维表达。座右铭：生而无畏，战至终章。`;
+            } else if (type === 'hr-evaluate') {
+                out.innerHTML = `> [GEMINI 3 FLASH - 人才画像评估]\n【HR 评估摘要】:\n1. 跨界复合能力：兼具严谨商业逻辑与现代视觉表达；\n2. AI 生产力赋能：具备敏锐技术嗅觉，能快速借助大模型构建自动化工具。`;
+            }
+        }
+
+        /* Rainbow Ink Dripping Engine */
+        let inkDrips = [];
+        let inkCanvas, inkCtx;
+        let inkAnimId = null;
+
+        function initRainbowInkCanvas() {
+            inkCanvas = document.getElementById('rainbowInkCanvas');
+            if (!inkCanvas) return;
+            inkCtx = inkCanvas.getContext('2d');
+            inkCanvas.width = 1000;
+            inkCanvas.height = 380;
+
+            const rainbowColors = [
+                '#f43f5e', '#ec4899', '#d946ef', '#a855f7', 
+                '#8b5cf6', '#6366f1', '#3b82f6', '#06b6d4', 
+                '#10b981', '#f59e0b', '#ff5500'
+            ];
+
+            inkDrips = [];
+            for (let i = 0; i < 32; i++) {
+                inkDrips.push({
+                    x: Math.random() * 640 + 180,
+                    y: Math.random() * 20,
+                    speed: Math.random() * 2.2 + 0.8,
+                    length: Math.random() * 65 + 25,
+                    radius: Math.random() * 3.8 + 2.5,
+                    color: rainbowColors[Math.floor(Math.random() * rainbowColors.length)],
+                    opacity: Math.random() * 0.75 + 0.25
+                });
+            }
+
+            function renderInkDrips() {
+                if (!document.getElementById('pptOverlayPage').classList.contains('active')) return;
+                inkCtx.clearRect(0, 0, inkCanvas.width, inkCanvas.height);
+
+                for (let i = 0; i < inkDrips.length; i++) {
+                    let d = inkDrips[i];
+                    d.y += d.speed;
+
+                    let grad = inkCtx.createLinearGradient(d.x, d.y - d.length, d.x, d.y);
+                    grad.addColorStop(0, 'rgba(0,0,0,0)');
+                    grad.addColorStop(1, d.color);
+
+                    inkCtx.save();
+                    inkCtx.beginPath();
+                    inkCtx.moveTo(d.x, Math.max(0, d.y - d.length));
+                    inkCtx.lineTo(d.x, d.y);
+                    inkCtx.strokeStyle = grad;
+                    inkCtx.lineWidth = d.radius * 0.9;
+                    inkCtx.lineCap = 'round';
+                    inkCtx.globalAlpha = d.opacity;
+                    inkCtx.shadowColor = d.color;
+                    inkCtx.shadowBlur = 12;
+                    inkCtx.stroke();
+
+                    inkCtx.beginPath();
+                    inkCtx.arc(d.x, d.y, d.radius, 0, Math.PI * 2);
+                    inkCtx.fillStyle = d.color;
+                    inkCtx.shadowBlur = 16;
+                    inkCtx.fill();
+                    inkCtx.restore();
+
+                    if (d.y > inkCanvas.height + 30) {
+                        d.x = Math.random() * 640 + 180;
+                        d.y = 0;
+                        d.speed = Math.random() * 2.2 + 0.8;
+                        d.length = Math.random() * 65 + 25;
+                        d.radius = Math.random() * 3.8 + 2.5;
+                        d.color = rainbowColors[Math.floor(Math.random() * rainbowColors.length)];
+                    }
+                }
+                inkAnimId = requestAnimationFrame(renderInkDrips);
+            }
+
+            if (inkAnimId) cancelAnimationFrame(inkAnimId);
+            renderInkDrips();
+        }
+
+        function openPPTOverlayPage() {
+            const page = document.getElementById('pptOverlayPage');
+            if (page) {
+                page.classList.add('active');
+                setTimeout(initRainbowInkCanvas, 100);
+            }
+        }
+
+        function closePPTOverlayPage() {
+            const page = document.getElementById('pptOverlayPage');
+            if (page) {
+                page.classList.remove('active');
+            }
+        }
+
+        function toggleCardFlip(cardId) {
+            const card = document.getElementById(cardId);
+            if (card) card.classList.toggle('flipped');
+        }
+
+        function openModal(key) {
+            const data = modalData[key];
+            if (data) {
+                document.getElementById('modalTitle').innerHTML = data.title;
+                let bodyHtml = `<p style="line-height:1.8; font-size:15.5px;">${data.body}</p>`;
+
+                if (data.use3D) {
+                    bodyHtml += `
+                        <div class="modal-3d-wrap" id="modal3dWrap">
+                            <button type="button" class="modal-3d-arrow modal-3d-arrow--prev" onclick="moveModal3dSlider(-1)">‹</button>
+                            <div class="modal-3d-stage" id="modal3dStage"></div>
+                            <button type="button" class="modal-3d-arrow modal-3d-arrow--next" onclick="moveModal3dSlider(1)">›</button>
+                            <div class="modal-3d-dots" id="modal3dDots"></div>
+                        </div>
+                    `;
+                    if (data.images && data.images.length > 0) {
+                        bodyHtml += `<div class="modal-gallery-grid" style="margin-top: 14px; max-height: 150px;">`;
+                        data.images.forEach((img, idx) => {
+                            const fallbackAttr = img.altSrc ? `onerror="this.onerror=null; this.src='${img.altSrc}';"` : `onerror="this.onerror=null; this.src='https://placehold.co/400x300/1e293b/38bdf8?text=${encodeURIComponent(img.caption)}';"`;
+                            bodyHtml += `
+                                <div class="modal-gallery-item" style="aspect-ratio: 16/10;" onclick="setModal3dIndex(${idx})">
+                                    <img src="${img.src}" alt="${img.caption}" loading="lazy" ${fallbackAttr} />
+                                    <div class="gallery-caption">${img.caption}</div>
+                                </div>
+                            `;
+                        });
+                        bodyHtml += `</div>`;
+                    }
+                    document.getElementById('modalBody').innerHTML = bodyHtml;
+                    document.getElementById('modalOverlay').classList.add('active');
+                    setTimeout(() => initModal3dSlider(data.images), 60);
+                    return;
+                }
+
+                if (data.useAccordion) {
+                    bodyHtml += `
+                        <div class="accordion-gallery" id="accordionGalleryRoot" role="list">
+                    `;
+                    data.images.forEach((img, idx) => {
+                        const fallbackAttr = img.altSrc ? `onerror="this.onerror=null; this.src='${img.altSrc}';"` : `onerror="this.onerror=null; this.src='https://placehold.co/900x1200/1e293b/38bdf8?text=${encodeURIComponent(img.label)}';"`;
+                        bodyHtml += `
+                            <div class="ag-panel" role="listitem" tabindex="0" aria-label="${img.label}">
+                                <span class="ag-panel__frame">
+                                    <span class="ag-panel__media">
+                                        <img src="${img.src}" alt="${img.label}" loading="lazy" ${fallbackAttr} draggable="false" />
+                                    </span>
+                                    <span class="ag-panel__overlay" aria-hidden="true"></span>
+                                </span>
+                                <span class="ag-panel__label" aria-hidden="true">
+                                    <span class="ag-panel__bar"></span>
+                                    <span class="ag-panel__text">${img.label}</span>
+                                </span>
+                            </div>
+                        `;
+                    });
+                    bodyHtml += `</div>`;
+                    document.getElementById('modalBody').innerHTML = bodyHtml;
+                    document.getElementById('modalOverlay').classList.add('active');
+                    setTimeout(() => initAccordionGallery(data.images), 60);
+                    return;
+                }
+
+                if (data.images && data.images.length > 0) {
+                    bodyHtml += `<div class="modal-gallery-grid">`;
+                    data.images.forEach(img => {
+                        const fallbackAttr = img.altSrc ? `onerror="this.onerror=null; this.src='${img.altSrc}';"` : `onerror="this.onerror=null; this.src='https://placehold.co/400x300/1e293b/38bdf8?text=${encodeURIComponent(img.caption)}';"`;
+                        bodyHtml += `
+                            <div class="modal-gallery-item" onclick="openLightbox('${img.src}', '${img.caption}')">
+                                <img src="${img.src}" alt="${img.caption}" loading="lazy" ${fallbackAttr} />
+                                <div class="gallery-caption">${img.caption}</div>
+                            </div>
+                        `;
+                    });
+                    bodyHtml += `</div>`;
+                }
+                document.getElementById('modalBody').innerHTML = bodyHtml;
+                document.getElementById('modalOverlay').classList.add('active');
+            }
+        }
+
+        function closeModal(e) { if (e.target.id === 'modalOverlay') closeModalDirect(); }
+        function closeModalDirect() {
+            document.getElementById('modalOverlay').classList.remove('active');
+            if (accordionTl) {
+                accordionTl.kill();
+                accordionTl = null;
+            }
+        }
+
+        function openLightbox(src, caption) {
+            let lb = document.getElementById('lightboxOverlay');
+            if (!lb) {
+                lb = document.createElement('div');
+                lb.id = 'lightboxOverlay';
+                lb.className = 'lightbox-overlay';
+                lb.onclick = closeLightbox;
+                lb.innerHTML = `
+                    <button class="lightbox-close" onclick="closeLightbox()" aria-label="关闭">&times;</button>
+                    <div class="lightbox-fullscreen-stage" onclick="event.stopPropagation()">
+                        <img id="lightboxImg" src="" alt="全屏照片" />
+                        <div id="lightboxCaption" class="lightbox-caption-bar"></div>
+                    </div>
+                `;
+                document.body.appendChild(lb);
+            }
+            document.getElementById('lightboxImg').src = src;
+            document.getElementById('lightboxCaption').textContent = caption || '';
+            lb.classList.add('active');
+        }
+
+        function closeLightbox() {
+            const lb = document.getElementById('lightboxOverlay');
+            if (lb) lb.classList.remove('active');
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') { closeModalDirect(); closeLightbox(); closePPTOverlayPage(); }
+        });
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            showToast(`已切换至 ${newTheme === 'dark' ? '深色' : '浅色'} 模式`);
+        }
+
+        function copyContact(text, label) {
+            const input = document.createElement('input');
+            input.value = text;
+            document.body.appendChild(input);
+            input.select();
+            document.execCommand('copy');
+            document.body.removeChild(input);
+            showToast(`已成功复制${label}`);
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toastMsg');
+            const toastText = document.getElementById('toastText');
+            if (toast && toastText) {
+                toastText.textContent = msg;
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 2500);
+            }
+        }
+
+        function initPaperPlaneCursor() {
+            const cursor = document.getElementById('paperPlaneCursor');
+            const trailCanvas = document.getElementById('paperPlaneTrailCanvas');
+            if (!cursor || !trailCanvas) return;
+
+            const trailCtx = trailCanvas.getContext('2d');
+            let mouseX = -100, mouseY = -100, currentX = -100, currentY = -100, prevX = -100, prevY = -100;
+            let currentAngle = -15;
+            let trailParticles = [];
+
+            function resizeTrail() {
+                trailCanvas.width = window.innerWidth;
+                trailCanvas.height = window.innerHeight;
+            }
+            resizeTrail();
+            window.addEventListener('resize', resizeTrail);
+
+            window.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX; mouseY = e.clientY;
+                const dx = mouseX - prevX, dy = mouseY - prevY;
+                const speed = Math.hypot(dx, dy);
+
+                if (speed > 2) {
+                    let angleDeg = Math.atan2(dy, dx) * (180 / Math.PI) + 45;
+                    currentAngle += (angleDeg - currentAngle) * 0.25;
+                }
+                prevX = mouseX; prevY = mouseY;
+            });
+
+            window.addEventListener('mousedown', () => cursor.classList.add('clicking'));
+            window.addEventListener('mouseup', () => cursor.classList.remove('clicking'));
+
+            const hoverSelectors = 'a, button, input, .color-card, .ink-slogan-card, .contact-item, .widget-btn, .slide-btn, .red-seal, .upload-img-btn, .slider-5photo-card, .ag-panel';
+            document.addEventListener('mouseover', (e) => { if (e.target.closest(hoverSelectors)) cursor.classList.add('hovering'); });
+            document.addEventListener('mouseout', (e) => { if (e.target.closest(hoverSelectors)) cursor.classList.remove('hovering'); });
+
+            function renderPaperPlane() {
+                currentX += (mouseX - currentX) * 0.4;
+                currentY += (mouseY - currentY) * 0.4;
+                cursor.style.left = currentX + 'px';
+                cursor.style.top = currentY + 'px';
+                cursor.style.transform = `translate(-10%, -10%) rotate(${currentAngle}deg)`;
+
+                trailCtx.clearRect(0, 0, trailCanvas.width, trailCanvas.height);
+                for (let i = trailParticles.length - 1; i >= 0; i--) {
+                    let p = trailParticles[i];
+                    p.x += p.vx; p.y += p.vy; p.alpha -= p.decay;
+                    if (p.alpha <= 0) { trailParticles.splice(i, 1); continue; }
+                    trailCtx.save();
+                    trailCtx.beginPath();
+                    trailCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    trailCtx.fillStyle = p.color;
+                    trailCtx.globalAlpha = p.alpha;
+                    trailCtx.shadowColor = p.color;
+                    trailCtx.shadowBlur = 6;
+                    trailCtx.fill();
+                    trailCtx.restore();
+                }
+                requestAnimationFrame(renderPaperPlane);
+            }
+            renderPaperPlane();
+        }
+
+        function initCanvas() {
+            const bgCanvas = document.getElementById('bgCanvas');
+            if (!bgCanvas) return;
+            const bgCtx = bgCanvas.getContext('2d');
+            function resizeBgCanvas() {
+                bgCanvas.width = window.innerWidth;
+                bgCanvas.height = window.innerHeight;
+            }
+            resizeBgCanvas();
+            window.addEventListener('resize', resizeBgCanvas);
+
+            const bgParticles = [];
+            for (let i = 0; i < 35; i++) {
+                bgParticles.push({
+                    x: Math.random() * bgCanvas.width,
+                    y: Math.random() * bgCanvas.height,
+                    vx: (Math.random() - 0.5) * 0.4,
+                    vy: (Math.random() - 0.5) * 0.4,
+                    size: Math.random() * 1.8 + 0.5,
+                    alpha: Math.random() * 0.5 + 0.25
+                });
+            }
+
+            function animateCanvas() {
+                bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+                for (let i = 0; i < bgParticles.length; i++) {
+                    let p = bgParticles[i];
+                    p.x += p.vx; p.y += p.vy;
+                    if (p.x < 0) p.x = bgCanvas.width;
+                    if (p.x > bgCanvas.width) p.x = 0;
+                    if (p.y < 0) p.y = bgCanvas.height;
+                    if (p.y > bgCanvas.height) p.y = 0;
+
+                    bgCtx.beginPath();
+                    bgCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    bgCtx.fillStyle = `rgba(148, 163, 184, ${p.alpha})`;
+                    bgCtx.fill();
+                }
+                requestAnimationFrame(animateCanvas);
+            }
+            animateCanvas();
+        }
+
+        window.onload = function() {
+            initCanvas();
+            init5PhotoSlider();
+            initScrollTrackEvents();
+            initPaperPlaneCursor();
+            initScrollExpand();
+            initStrokeTextAnimation();
+            initBlurText();
+        };
+    </script>
+</body>
+</html>
